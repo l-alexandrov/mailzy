@@ -331,3 +331,4 @@ ASALocalRun/
 Mailzy/nbproject/private/
 Mailzy/build/*
 Mailzy/dist/*
+Mailzy/nbproject/build-impl.xml
