@@ -6,6 +6,8 @@
 package mailzy;
 
 import javax.swing.JFrame;
+import javax.swing.ImageIcon;
+
 
 /**
  *
@@ -19,6 +21,7 @@ public class LoginForm extends javax.swing.JFrame {
     public LoginForm() {
         initComponents();
         this.setResizable(false);
+        passwordVisible.setVisible(false);
         account.setText("Enter your account");
     }
 
@@ -39,11 +42,14 @@ public class LoginForm extends javax.swing.JFrame {
         emailIcon1 = new javax.swing.JLabel();
         account = new javax.swing.JTextField();
         password = new javax.swing.JPasswordField();
+        passwordVisible = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login");
         setBackground(new java.awt.Color(255, 255, 255));
         setFocusCycleRoot(false);
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(400, 727));
 
         jPanel2.setBackground(new java.awt.Color(102, 102, 255));
 
@@ -75,7 +81,7 @@ public class LoginForm extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(loginIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(loginIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -98,51 +104,70 @@ public class LoginForm extends javax.swing.JFrame {
 
         password.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         password.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        password.setText("jPasswordField1");
+        password.setText("SamlePassword");
         password.setPreferredSize(new java.awt.Dimension(93, 28));
+        password.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                passwordMouseClicked(evt);
+            }
+        });
+
+        passwordVisible.setIcon(new javax.swing.ImageIcon(getClass().getResource("/swing/images/icons8_eye_40px.png"))); // NOI18N
+        passwordVisible.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                passwordVisibleMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(passwordIcon)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(account, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
-                    .addComponent(password, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(33, 33, 33))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(30, 30, 30)
-                    .addComponent(emailIcon1)
-                    .addContainerGap(290, Short.MAX_VALUE)))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(passwordIcon)
+                        .addGap(18, 18, 18)
+                        .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(emailIcon1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(account, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(passwordVisible, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(84, 84, 84)
-                .addComponent(account, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(passwordIcon)
-                    .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(342, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(200, 200, 200)
-                    .addComponent(emailIcon1)
-                    .addContainerGap(447, Short.MAX_VALUE)))
+                    .addComponent(account, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(74, 74, 74)
+                        .addComponent(emailIcon1)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(48, 48, 48)
+                            .addComponent(passwordVisible))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(25, 25, 25)
+                            .addComponent(passwordIcon)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(342, 342, 342))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -153,22 +178,50 @@ public class LoginForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void accountMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accountMouseEntered
+    private void passwordVisibleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_passwordVisibleMouseClicked
         // TODO add your handling code here:
-        
-       if("Enter your account".equals(account.getText()))
-       account.setText("");
-       
-       
-        
-    }//GEN-LAST:event_accountMouseEntered
+        //ImageIcon iconVisible = new ImageIcon(getClass().getResource("swing/images/icon8_eye_40px.png"));
+        //ImageIcon iconInvisible = new ImageIcon(getClass().getResource("swing/images/icon8_invisible_40px.png"));
+
+        if(passwdVisibleClicked%2==0){
+            password.setEchoChar((char)0);
+            passwdVisibleClicked++;
+
+            passwordVisible.setIcon(new ImageIcon("D:\\GitHub\\mailzy\\Mailzy\\src\\swing\\images\\icons8_eye_40px.png"));
+        }
+        else{
+            password.setEchoChar('*');
+            passwdVisibleClicked++;
+            passwordVisible.setIcon(new ImageIcon("D:\\GitHub\\mailzy\\Mailzy\\src\\swing\\images\\icons8_invisible_40px.png"));
+
+        }
+    }//GEN-LAST:event_passwordVisibleMouseClicked
+
+    private void passwordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_passwordMouseClicked
+        // TODO add your handling code here:
+
+        if(passwdClicked==0){
+            password.setText("");
+            passwdClicked++;
+        }
+        passwordVisible.setVisible(true);
+    }//GEN-LAST:event_passwordMouseClicked
 
     private void accountMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accountMouseExited
         // TODO add your handling code here:
         if(account.getText().isBlank()){
-           account.setText("Enter your account");
-       } 
+            account.setText("Enter your account");
+        }
     }//GEN-LAST:event_accountMouseExited
+
+    private void accountMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accountMouseEntered
+        // TODO add your handling code here:
+
+        if("Enter your account".equals(account.getText()))
+        account.setText("");
+
+    }//GEN-LAST:event_accountMouseEntered
+    int passwdClicked=0;    int passwdVisibleClicked=0;
 
     /**
      * @param args the command line arguments
@@ -222,5 +275,6 @@ public class LoginForm extends javax.swing.JFrame {
     private javax.swing.JLabel loginIcon;
     private javax.swing.JPasswordField password;
     private javax.swing.JLabel passwordIcon;
+    private javax.swing.JLabel passwordVisible;
     // End of variables declaration//GEN-END:variables
 }
