@@ -112,7 +112,7 @@ public class LoginForm extends javax.swing.JFrame {
             }
         });
 
-        passwordVisible.setIcon(new javax.swing.ImageIcon(getClass().getResource("/swing/images/icons8_eye_40px.png"))); // NOI18N
+        passwordVisible.setIcon(new javax.swing.ImageIcon(getClass().getResource("/swing/images/icons8_invisible_40px.png"))); // NOI18N
         passwordVisible.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 passwordVisibleMouseClicked(evt);
@@ -177,23 +177,25 @@ public class LoginForm extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
+        ImageIcon iconVisible = new ImageIcon(getClass().getResource("..//swing//images//icons8_eye_40px.png"));
+        //ImageIcon iconInvisible = new ImageIcon(getClass().getResource("icons8_invisible_40px.png")); // another way but must png file exist in mailzy folder
+        ImageIcon iconInvisible = new ImageIcon(getClass().getResource("..//swing//images//icons8_invisible_40px.png"));
     private void passwordVisibleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_passwordVisibleMouseClicked
         // TODO add your handling code here:
-        //ImageIcon iconVisible = new ImageIcon(getClass().getResource("swing/images/icon8_eye_40px.png"));
-        //ImageIcon iconInvisible = new ImageIcon(getClass().getResource("swing/images/icon8_invisible_40px.png"));
+
 
         if(passwdVisibleClicked%2==0){
             password.setEchoChar((char)0);
             passwdVisibleClicked++;
-
-            passwordVisible.setIcon(new ImageIcon("D:\\GitHub\\mailzy\\Mailzy\\src\\swing\\images\\icons8_eye_40px.png"));
+            passwordVisible.setIcon(iconVisible);
+            
+            
         }
         else{
             password.setEchoChar('*');
             passwdVisibleClicked++;
-            passwordVisible.setIcon(new ImageIcon("D:\\GitHub\\mailzy\\Mailzy\\src\\swing\\images\\icons8_invisible_40px.png"));
-
+            passwordVisible.setIcon(iconInvisible);
+            
         }
     }//GEN-LAST:event_passwordVisibleMouseClicked
 
@@ -221,7 +223,7 @@ public class LoginForm extends javax.swing.JFrame {
         account.setText("");
 
     }//GEN-LAST:event_accountMouseEntered
-    int passwdClicked=0;    int passwdVisibleClicked=0;
+    int passwdClicked=0;    int passwdVisibleClicked=2;
 
     /**
      * @param args the command line arguments
