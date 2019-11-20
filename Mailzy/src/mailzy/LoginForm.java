@@ -6,8 +6,13 @@
 package mailzy;
 
 import java.awt.Color;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import javax.swing.JFrame;
 import javax.swing.ImageIcon;
+import mailzy.storage.Authenticator;
 
 
 /**
@@ -15,7 +20,7 @@ import javax.swing.ImageIcon;
  * @author hrist
  */
 public class LoginForm extends javax.swing.JFrame {
-
+    
     /**
      * Creates new form LoginForm
      */
@@ -24,7 +29,6 @@ public class LoginForm extends javax.swing.JFrame {
         this.setResizable(false);
         passwordVisible.setVisible(false);
         account.setText("Enter your account");
-        
     }
 
     /**
@@ -46,9 +50,12 @@ public class LoginForm extends javax.swing.JFrame {
         password = new javax.swing.JPasswordField();
         passwordVisible = new javax.swing.JLabel();
         loginButton1 = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        gmailLabel = new javax.swing.JLabel();
+        abvLabel = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        rememberMe = new javax.swing.JCheckBox();
+        outlookLabel = new javax.swing.JLabel();
+        errorLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login");
@@ -129,14 +136,46 @@ public class LoginForm extends javax.swing.JFrame {
         loginButton1.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         loginButton1.setForeground(new java.awt.Color(255, 255, 255));
         loginButton1.setText("Login");
+        loginButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loginButton1ActionPerformed(evt);
+            }
+        });
 
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/swing/images/icons8_gmail_35px_1.png"))); // NOI18N
+        gmailLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/swing/images/icons8_gmail_35px_1.png"))); // NOI18N
+        gmailLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                gmailLabelMouseClicked(evt);
+            }
+        });
 
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/swing/images/icons8_microsoft_outlook_35px_1.png"))); // NOI18N
+        abvLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        abvLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/swing/images/abv-logo.png"))); // NOI18N
+        abvLabel.setMaximumSize(new java.awt.Dimension(20, 20));
+        abvLabel.setMinimumSize(new java.awt.Dimension(20, 20));
+        abvLabel.setPreferredSize(new java.awt.Dimension(20, 20));
+        abvLabel.setRequestFocusEnabled(false);
+        abvLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                abvLabelMouseClicked(evt);
+            }
+        });
 
         jLabel2.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Login with");
+        jLabel2.setText("Register");
+
+        rememberMe.setText("Remember me");
+
+        outlookLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/swing/images/icons8_microsoft_outlook_35px_1.png"))); // NOI18N
+        outlookLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                outlookLabelMouseClicked(evt);
+            }
+        });
+
+        errorLabel.setForeground(new java.awt.Color(255, 51, 51));
+        errorLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -147,25 +186,34 @@ public class LoginForm extends javax.swing.JFrame {
                 .addGap(12, 12, 12)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(emailIcon1)
+                        .addGap(18, 18, 18)
+                        .addComponent(account, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(passwordIcon)
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(loginButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(58, 58, 58)
-                                .addComponent(jLabel3)
+                                .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel4))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(password, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                                .addComponent(loginButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(passwordVisible, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(emailIcon1)
-                        .addGap(18, 18, 18)
-                        .addComponent(account, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(18, Short.MAX_VALUE))
+                                .addComponent(passwordVisible, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(rememberMe)
+                                    .addGap(40, 40, 40))))))
+                .addContainerGap(21, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(gmailLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(outlookLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(abvLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(130, 130, 130))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -176,7 +224,6 @@ public class LoginForm extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(74, 74, 74)
                         .addComponent(emailIcon1)))
-                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
@@ -188,15 +235,20 @@ public class LoginForm extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(35, 35, 35)
                         .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(43, 43, 43)
+                .addGap(18, 18, 18)
                 .addComponent(loginButton1)
-                .addGap(44, 44, 44)
+                .addGap(16, 16, 16)
+                .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(rememberMe)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
-                .addGap(188, 188, 188))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(outlookLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(gmailLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(abvLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -207,7 +259,7 @@ public class LoginForm extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 667, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 631, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -218,26 +270,20 @@ public class LoginForm extends javax.swing.JFrame {
         ImageIcon iconInvisible = new ImageIcon(getClass().getResource("..//swing//images//icons8_invisible_40px.png"));
     private void passwordVisibleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_passwordVisibleMouseClicked
         // TODO add your handling code here:
-
-
         if(passwdVisibleClicked%2==0){
             password.setEchoChar((char)0);
             passwdVisibleClicked++;
             passwordVisible.setIcon(iconVisible);
-            
-            
         }
         else{
             password.setEchoChar('*');
             passwdVisibleClicked++;
             passwordVisible.setIcon(iconInvisible);
-            
         }
     }//GEN-LAST:event_passwordVisibleMouseClicked
 
     private void passwordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_passwordMouseClicked
         // TODO add your handling code here:
-
         if(passwdClicked==0){
             password.setText("");
             passwdClicked++;
@@ -254,13 +300,89 @@ public class LoginForm extends javax.swing.JFrame {
 
     private void accountMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accountMouseEntered
         // TODO add your handling code here:
-
         if("Enter your account".equals(account.getText()))
         account.setText("");
-
     }//GEN-LAST:event_accountMouseEntered
-        int passwdClicked=0;    int passwdVisibleClicked=2;
 
+    private void gmailLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_gmailLabelMouseClicked
+        // TODO add your handling code here:
+        String url = "https://accounts.google.com/signup/v2/webcreateaccount?service=accountsettings&continue=https%3A%2F%2Fmyaccount.google.com%2Fb%2F110810760468130681345%2F%3Futm_source%3Dsign_in_no_continue%26nlr%3D1%26pageId%3Dnone&dsh=S-1710728375%3A1574237796118791&gmb=exp&biz=false&flowName=GlifWebSignIn&flowEntry=SignUp";
+        if(Desktop.isDesktopSupported()){
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                desktop.browse(new URI(url));
+            } catch (IOException | URISyntaxException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }else{
+            Runtime runtime = Runtime.getRuntime();
+            try {
+                runtime.exec("xdg-open " + url);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    
+    }//GEN-LAST:event_gmailLabelMouseClicked
+
+    private void abvLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_abvLabelMouseClicked
+        // TODO add your handling code here:
+        String url = "https://passport.abv.bg/app/profiles/registration";
+        if(Desktop.isDesktopSupported()){
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                desktop.browse(new URI(url));
+            } catch (IOException | URISyntaxException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }else{
+            Runtime runtime = Runtime.getRuntime();
+            try {
+                runtime.exec("xdg-open " + url);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_abvLabelMouseClicked
+
+    private void outlookLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_outlookLabelMouseClicked
+        // TODO add your handling code here:
+        String url = "https://signup.live.com/?lic=1";
+        if(Desktop.isDesktopSupported()){
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                desktop.browse(new URI(url));
+            } catch (IOException | URISyntaxException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }else{
+            Runtime runtime = Runtime.getRuntime();
+            try {
+                runtime.exec("xdg-open " + url);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_outlookLabelMouseClicked
+
+    private void loginButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButton1ActionPerformed
+        // TODO add your handling code here:
+        if( account.getText().isBlank() || password.getText().isBlank() || "Enter your account".equals(account.getText())){
+            errorLabel.setText("Plese enter email and password!");
+        }
+        else{
+            errorLabel.setText("");
+        }
+        
+    }//GEN-LAST:event_loginButton1ActionPerformed
+        int passwdClicked=0;
+        int passwdVisibleClicked=2;
     /**
      * @param args the command line arguments
      */
@@ -303,18 +425,21 @@ public class LoginForm extends javax.swing.JFrame {
 //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel abvLabel;
     private javax.swing.JTextField account;
     private javax.swing.JLabel emailIcon1;
+    private javax.swing.JLabel errorLabel;
+    private javax.swing.JLabel gmailLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JButton loginButton1;
     private javax.swing.JLabel loginIcon;
+    private javax.swing.JLabel outlookLabel;
     private javax.swing.JPasswordField password;
     private javax.swing.JLabel passwordIcon;
     private javax.swing.JLabel passwordVisible;
+    private javax.swing.JCheckBox rememberMe;
     // End of variables declaration//GEN-END:variables
 }
