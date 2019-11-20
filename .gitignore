@@ -328,8 +328,6 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
-./Mailzy/nbproject/private/
+./Mailzy/nbproject/*
 ./Mailzy/build/*
 ./Mailzy/dist/*
-./Mailzy/nbproject/build-impl.xml
-/Mailzy/dist/
