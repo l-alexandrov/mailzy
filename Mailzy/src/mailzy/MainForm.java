@@ -6,6 +6,9 @@
 package mailzy;
 
 import javax.swing.*;
+import java.sql.*;
+import java.util.ArrayList;
+import mailzy.storage.SQLiteConnector;
 import net.atlanticbb.tantlinger.shef.*;
 
 
@@ -20,8 +23,41 @@ public class MainForm extends javax.swing.JFrame {
      */
     public MainForm() {
         initComponents();
-
-
+        this.setVisible(true);
+        this.connection = null;
+        this.mailListDetails = new ArrayList<String[]>();
+        this.mailList.setModel(new DefaultListModel<String>());
+        try {
+            this.connection = new SQLiteConnector();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(this, "A Database connection error occured!");
+            System.exit(1);
+        }
+        
+        String senderMail = "l.alexandrov@ue-varna.bg";
+        //TODO: Fetch credentials from file
+        
+        try {
+            this.connection.query("SELECT * FROM mails WHERE sender = '"+ senderMail+"'");
+            ResultSet rs = this.connection.fetch();
+            while(rs.next()){
+                String[] row = new String[]{  
+                    rs.getString("sender"),
+                    rs.getString("reciever"),
+                    rs.getString("recieved_at"),
+                    rs.getString("subject"),
+                    rs.getString("mail")
+                };
+                this.mailListDetails.add(row);
+                ((DefaultListModel<String>) this.mailList.getModel()).addElement(row[3]);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(this, "A Database query error occured!");
+            System.exit(1);
+        }
+        //TODO: Fetch data from SMTP, show in application and insert in db (cache)
     }
 
     /**
@@ -33,7 +69,7 @@ public class MainForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        mailList = new javax.swing.JScrollPane();
+        mailListPanel = new javax.swing.JScrollPane();
         detailsPanel = new javax.swing.JPanel();
         fromLabel = new javax.swing.JLabel();
         toLabel = new javax.swing.JLabel();
@@ -144,7 +180,7 @@ public class MainForm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(mailList, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                    .addComponent(mailListPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
                     .addComponent(speechPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -159,7 +195,7 @@ public class MainForm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(mailList)
+                    .addComponent(mailListPanel)
                     .addComponent(detailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -170,6 +206,9 @@ public class MainForm extends javax.swing.JFrame {
                         .addComponent(speechBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())))
         );
+        
+        mailList = new JList();
+        mailListPanel.setViewportView(mailList);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -194,12 +233,13 @@ public class MainForm extends javax.swing.JFrame {
         frame.getContentPane().add(editor);
         frame.setVisible(true);
     }//GEN-LAST:event_newMailItemActionPerformed
-
+    private ArrayList<String[]> mailListDetails;
+    private SQLiteConnector connection;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel detailsPanel;
     private javax.swing.JTextField fromInput;
     private javax.swing.JLabel fromLabel;
-    private javax.swing.JScrollPane mailList;
+    private javax.swing.JScrollPane mailListPanel;
     private javax.swing.JMenu mailMenu;
     private javax.swing.JEditorPane mailText;
     private javax.swing.JScrollPane mailTextPane;
@@ -212,5 +252,6 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JLabel subjectLabel;
     private javax.swing.JTextField toInput;
     private javax.swing.JLabel toLabel;
+    private JList mailList;
     // End of variables declaration//GEN-END:variables
 }

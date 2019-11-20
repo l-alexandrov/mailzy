@@ -5,7 +5,10 @@
  */
 package mailzy;
 
+import java.sql.SQLException;
+
 import javax.swing.JFrame;
+import mailzy.storage.*;
 
 /**
  *
@@ -14,11 +17,17 @@ import javax.swing.JFrame;
 public class Mailzy {
     
     public Mailzy(){
-        if(!checkIfLogged()){
-            //TODO: Show dialog for logging in
-        } else {
-            JFrame form =  new MainForm();
-            form.setVisible(true);
+        LoginForm loginForm = new LoginForm();
+        try{
+            Authenticator authenticator = new Authenticator();
+
+            while(!authenticator.isAuthenticated()){
+                loginForm.setVisible(true); 
+            }
+            this.openMainWindow();
+        }
+        catch(Exception e){
+            System.exit(1);
         }
     }
     
@@ -26,9 +35,10 @@ public class Mailzy {
         Mailzy mailzy = new Mailzy();    
     }
     
-    public final Boolean checkIfLogged(){
-        //TODO: Write logic to check if logged
-        return true;
+  
+    
+    private void openMainWindow(){
+        JFrame form =  new MainForm();        
     }
     
 }
