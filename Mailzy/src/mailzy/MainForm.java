@@ -10,6 +10,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import mailzy.storage.SQLiteConnector;
 import net.atlanticbb.tantlinger.shef.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 /**
@@ -68,8 +75,6 @@ public class MainForm extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
-        mailListPanel = new javax.swing.JScrollPane();
         detailsPanel = new javax.swing.JPanel();
         fromLabel = new javax.swing.JLabel();
         toLabel = new javax.swing.JLabel();
@@ -81,6 +86,11 @@ public class MainForm extends javax.swing.JFrame {
         subjectInput = new javax.swing.JTextField();
         speechPanel = new javax.swing.JPanel();
         newMailBtn = new javax.swing.JButton();
+        newMailBtn.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        	}
+        });
         speechBtn = new javax.swing.JToggleButton();
         mainMenuBar = new javax.swing.JMenuBar();
         mailMenu = new javax.swing.JMenu();
@@ -100,57 +110,55 @@ public class MainForm extends javax.swing.JFrame {
         mailText.getAccessibleContext().setAccessibleDescription("");
 
         javax.swing.GroupLayout detailsPanelLayout = new javax.swing.GroupLayout(detailsPanel);
-        detailsPanel.setLayout(detailsPanelLayout);
         detailsPanelLayout.setHorizontalGroup(
-            detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(detailsPanelLayout.createSequentialGroup()
-                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mailTextPane)
-                    .addGroup(detailsPanelLayout.createSequentialGroup()
-                        .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(subjectLabel)
-                            .addComponent(toLabel, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(fromLabel, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(toInput)
-                            .addComponent(fromInput, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
-                            .addComponent(subjectInput))))
-                .addContainerGap())
+        	detailsPanelLayout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(detailsPanelLayout.createSequentialGroup()
+        			.addGroup(detailsPanelLayout.createParallelGroup(Alignment.LEADING)
+        				.addGroup(detailsPanelLayout.createSequentialGroup()
+        					.addGroup(detailsPanelLayout.createParallelGroup(Alignment.LEADING)
+        						.addComponent(subjectLabel)
+        						.addComponent(toLabel, Alignment.TRAILING)
+        						.addComponent(fromLabel, Alignment.TRAILING))
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addGroup(detailsPanelLayout.createParallelGroup(Alignment.LEADING)
+        						.addComponent(toInput, GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+        						.addComponent(fromInput, GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+        						.addComponent(subjectInput, GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)))
+        				.addComponent(mailTextPane, GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE))
+        			.addContainerGap())
         );
         detailsPanelLayout.setVerticalGroup(
-            detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, detailsPanelLayout.createSequentialGroup()
-                .addGap(1, 1, 1)
-                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(fromInput, javax.swing.GroupLayout.PREFERRED_SIZE, 31, Short.MAX_VALUE)
-                    .addComponent(fromLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(toLabel)
-                    .addComponent(toInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(subjectInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(subjectLabel))
-                .addGap(18, 18, 18)
-                .addComponent(mailTextPane, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE))
+        	detailsPanelLayout.createParallelGroup(Alignment.TRAILING)
+        		.addGroup(detailsPanelLayout.createSequentialGroup()
+        			.addGap(1)
+        			.addGroup(detailsPanelLayout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(fromInput, GroupLayout.PREFERRED_SIZE, 31, Short.MAX_VALUE)
+        				.addComponent(fromLabel))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(detailsPanelLayout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(toLabel)
+        				.addComponent(toInput, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(detailsPanelLayout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(subjectInput, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(subjectLabel))
+        			.addGap(18)
+        			.addComponent(mailTextPane, GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE))
         );
+        detailsPanel.setLayout(detailsPanelLayout);
 
         newMailBtn.setText("New mail");
 
         javax.swing.GroupLayout speechPanelLayout = new javax.swing.GroupLayout(speechPanel);
-        speechPanel.setLayout(speechPanelLayout);
         speechPanelLayout.setHorizontalGroup(
-            speechPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(newMailBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        	speechPanelLayout.createParallelGroup(Alignment.TRAILING)
+        		.addComponent(newMailBtn, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
         );
         speechPanelLayout.setVerticalGroup(
-            speechPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(speechPanelLayout.createSequentialGroup()
-                .addComponent(newMailBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-                .addContainerGap())
+        	speechPanelLayout.createParallelGroup(Alignment.TRAILING)
+        		.addComponent(newMailBtn, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
         );
+        speechPanel.setLayout(speechPanelLayout);
 
         speechBtn.setText("Speech");
 
@@ -173,42 +181,102 @@ public class MainForm extends javax.swing.JFrame {
         mainMenuBar.add(mailMenu);
 
         setJMenuBar(mainMenuBar);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(mailListPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
-                    .addComponent(speechPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(detailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(speechBtn)
-                        .addContainerGap())))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(mailListPanel)
-                    .addComponent(detailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(speechPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(speechBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
-        );
         
         mailList = new JList();
-        mailListPanel.setViewportView(mailList);
+        
+        JPanel jPanelMenu = new JPanel();
+        jPanelMenu.setBackground(Color.ORANGE);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        layout.setHorizontalGroup(
+        	layout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(layout.createSequentialGroup()
+        			.addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+        				.addGroup(layout.createSequentialGroup()
+        					.addComponent(jPanelMenu, GroupLayout.PREFERRED_SIZE, 215, GroupLayout.PREFERRED_SIZE)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(mailList, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE))
+        				.addComponent(speechPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        			.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+        				.addGroup(layout.createSequentialGroup()
+        					.addGap(10)
+        					.addComponent(detailsPanel, GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE))
+        				.addGroup(layout.createSequentialGroup()
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(speechBtn))))
+        );
+        layout.setVerticalGroup(
+        	layout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(layout.createSequentialGroup()
+        			.addGroup(layout.createParallelGroup(Alignment.LEADING)
+        				.addComponent(jPanelMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        				.addComponent(mailList, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+        				.addComponent(detailsPanel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+        				.addComponent(speechPanel, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(speechBtn, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)))
+        );
+        
+        JLabel lblMenu = new JLabel("Menu");
+        lblMenu.setForeground(Color.YELLOW);
+        lblMenu.setBackground(new Color(255, 0, 0));
+        lblMenu.addMouseListener(new MouseAdapter() {
+        	
+        	int x = 210;
+        	@Override
+        	public void mouseClicked(MouseEvent e) {
+        		
+        		//System.out.println( jPanelMenu.getLocationOnScreen().getY() - getContentPane().getLocationOnScreen().getY());
+                System.out.println(jPanelMenu.getSize().height);
+        		if (x == 210) {
+            		//jPanelMenu.setSize(jPanelMenu.getSize().w,jPanelMenu.getSize().height);
+                            Thread th = new Thread() {
+                @Override
+                public void run() {
+                    for (int i = 210; i >= 40; i--) {
+                        try {
+                            Thread.sleep(5);
+                        } catch (InterruptedException ex) {
+                            
+                        }
+                        jPanelMenu.setSize(i,jPanelMenu.getSize().height);
+                        
+                    }
+                    System.out.println(lblMenu.getLocation());
+                    
+                    lblMenu.setLocation(5, 10);
+            }
+            			
+            			
+         
+                            };th.start();
+                            x=0;
+        } 
+        		System.out.println("DONE");
+        	}
+        	@Override
+        	public void mouseEntered(MouseEvent e) {
+        		lblMenu.setBackground(Color.black);
+        	}
+        });
+        GroupLayout gl_jPanelMenu = new GroupLayout(jPanelMenu);
+        gl_jPanelMenu.setHorizontalGroup(
+        	gl_jPanelMenu.createParallelGroup(Alignment.TRAILING)
+        		.addGroup(gl_jPanelMenu.createSequentialGroup()
+        			.addContainerGap(144, Short.MAX_VALUE)
+        			.addComponent(lblMenu, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
+        			.addContainerGap())
+        );
+        gl_jPanelMenu.setVerticalGroup(
+        	gl_jPanelMenu.createParallelGroup(Alignment.LEADING)
+        		.addGroup(gl_jPanelMenu.createSequentialGroup()
+        			.addGap(10)
+        			.addComponent(lblMenu, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
+        			.addContainerGap(416, Short.MAX_VALUE))
+        );
+        jPanelMenu.setLayout(gl_jPanelMenu);
+        getContentPane().setLayout(layout);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -239,7 +307,6 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JPanel detailsPanel;
     private javax.swing.JTextField fromInput;
     private javax.swing.JLabel fromLabel;
-    private javax.swing.JScrollPane mailListPanel;
     private javax.swing.JMenu mailMenu;
     private javax.swing.JEditorPane mailText;
     private javax.swing.JScrollPane mailTextPane;
@@ -253,5 +320,4 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JTextField toInput;
     private javax.swing.JLabel toLabel;
     private JList mailList;
-    // End of variables declaration//GEN-END:variables
 }

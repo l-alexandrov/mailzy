@@ -378,6 +378,9 @@ public class LoginForm extends javax.swing.JFrame {
         }
         else{
             errorLabel.setText("");
+            MainForm mf = new MainForm();
+            mf.setVisible(true);
+            
         }
         
     }//GEN-LAST:event_loginButton1ActionPerformed
