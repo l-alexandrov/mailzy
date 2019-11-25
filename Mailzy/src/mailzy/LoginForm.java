@@ -13,6 +13,14 @@ import java.net.URISyntaxException;
 import javax.swing.JFrame;
 import javax.swing.ImageIcon;
 import mailzy.storage.Authenticator;
+import java.awt.event.ContainerAdapter;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputMethodListener;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 
 /**
@@ -47,7 +55,36 @@ public class LoginForm extends javax.swing.JFrame {
         passwordIcon = new javax.swing.JLabel();
         emailIcon1 = new javax.swing.JLabel();
         account = new javax.swing.JTextField();
+        account.addFocusListener(new FocusAdapter() {
+        	@Override
+        	public void focusGained(FocusEvent e) {
+        		if("Enter your account".equals(account.getText()))
+        	        account.setText("");
+        	}
+        	@Override
+        	public void focusLost(FocusEvent e) {
+        		if(account.getText().isBlank()){
+                    account.setText("Enter your account");
+                }
+        	}
+        });
+        
+               
         password = new javax.swing.JPasswordField();
+        password.addFocusListener(new FocusAdapter() {
+        	public void focusGained(FocusEvent e) {
+        		if("Enter your password".equals(password.getText())) {
+        			password.setText("");
+        			passwordVisibleBtn();
+        		}
+        	}
+        	@Override
+        	public void focusLost(FocusEvent e) {
+        		if(password.getText().isBlank() || "Enter your password".equals(password.getText())) {
+        			password.setText("Enter your password");
+        		}
+        	}
+        });
         passwordVisible = new javax.swing.JLabel();
         loginButton1 = new javax.swing.JButton();
         gmailLabel = new javax.swing.JLabel();
@@ -117,7 +154,7 @@ public class LoginForm extends javax.swing.JFrame {
 
         password.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         password.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        password.setText("SamlePassword");
+        password.setText("Enter your password");
         password.setPreferredSize(new java.awt.Dimension(93, 28));
         password.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -268,9 +305,11 @@ public class LoginForm extends javax.swing.JFrame {
         ImageIcon iconVisible = new ImageIcon(getClass().getResource("..//swing//images//icons8_eye_40px.png"));
         //ImageIcon iconInvisible = new ImageIcon(getClass().getResource("icons8_invisible_40px.png")); // another way but must png file exist in mailzy folder
         ImageIcon iconInvisible = new ImageIcon(getClass().getResource("..//swing//images//icons8_invisible_40px.png"));
-    private void passwordVisibleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_passwordVisibleMouseClicked
-        // TODO add your handling code here:
-        if(passwdVisibleClicked%2==0){
+    private void passwordVisibleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_passwordVisibleMouseClicked        
+    	passwordIconChange();
+    }//GEN-LAST:event_passwordVisibleMouseClicked
+    private void passwordIconChange() { //Change text to * or * to text on click and change icons
+    	if(passwdVisibleClicked%2==0){
             password.setEchoChar((char)0);
             passwdVisibleClicked++;
             passwordVisible.setIcon(iconVisible);
@@ -280,16 +319,17 @@ public class LoginForm extends javax.swing.JFrame {
             passwdVisibleClicked++;
             passwordVisible.setIcon(iconInvisible);
         }
-    }//GEN-LAST:event_passwordVisibleMouseClicked
-
+    }
     private void passwordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_passwordMouseClicked
-        // TODO add your handling code here:
-        if(passwdClicked==0){
-            password.setText("");
-            passwdClicked++;
-        }
-        passwordVisible.setVisible(true);
+    	passwordVisibleBtn();
     }//GEN-LAST:event_passwordMouseClicked
+private void passwordVisibleBtn() { 
+	if(passwdClicked==0){
+        password.setText("");
+        passwdClicked++;
+    }
+    passwordVisible.setVisible(true);
+}
 
     private void accountMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accountMouseExited
         // TODO add your handling code here:

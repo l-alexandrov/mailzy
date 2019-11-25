@@ -12,6 +12,8 @@ import mailzy.storage.SQLiteConnector;
 import net.atlanticbb.tantlinger.shef.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.event.MenuListener;
+
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -180,6 +182,7 @@ public class MainForm extends javax.swing.JFrame {
 		mailList = new JList();
 
 		JPanel jPanelMenu = new JPanel();
+		jPanelMenu.setForeground(new Color(0, 0, 0));
 		jPanelMenu.setBackground(new java.awt.Color(29, 44, 99));
 		
 
@@ -212,7 +215,7 @@ public class MainForm extends javax.swing.JFrame {
 						.addComponent(speechPanel, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
 						.addComponent(speechBtn, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)))
 		);
-
+		JLabel menuLogo = new JLabel("Mailzy");
 		JLabel lblMenu = new JLabel("");
 		lblMenu.setToolTipText("Menu");
 		lblMenu.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_menu_35px_3.png")));
@@ -244,17 +247,20 @@ public class MainForm extends javax.swing.JFrame {
 								lblMenu.setLocation(i - 37, 10);
 							}
 							// System.out.println(lblMenu.getLocation());
+							
 
 						}
 
 					};
 					th.start();
+					//menuLogo.setLocation(113, 10);
+					//menuLogo.setVisible(true);
 
 					sideBarOpen = true;
 				}
 
 				else if (sideBarOpen == true) {
-
+					//menuLogo.setVisible(false);
 					Thread th = new Thread() {
 						@Override
 						public void run() {
@@ -281,164 +287,176 @@ public class MainForm extends javax.swing.JFrame {
 			}
 		});
 		
-		JPanel panel = new JPanel();
-		
-		panel_1 = new JPanel();
-		
-		label_1 = new JLabel("");
-		label_1.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_send_email_20px.png")));
-		label_1.setToolTipText("Menu");
-		label_1.setHorizontalAlignment(SwingConstants.CENTER);
+		JPanel menuNewMailPanel = new JPanel();
+		menuNewMailPanel.setBackground(new java.awt.Color(29, 44, 99));
+		menuSendMailPanel = new JPanel();
+		menuSendMailPanel.setBackground(new java.awt.Color(29, 44, 99));
+		SendMailIcon = new JLabel("");
+		SendMailIcon.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_send_email_20px.png")));
+		SendMailIcon.setToolTipText("Menu");
+		SendMailIcon.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		lblRecievedMails = new JLabel();
+		lblRecievedMails.setForeground(Color.WHITE);
 		lblRecievedMails.setText("Recieved Mails");
 		lblRecievedMails.setHorizontalAlignment(SwingConstants.CENTER);
 		lblRecievedMails.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
-		gl_panel_1.setHorizontalGroup(
-			gl_panel_1.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_1.createSequentialGroup()
+		GroupLayout gl_menuSendMailPanel = new GroupLayout(menuSendMailPanel);
+		gl_menuSendMailPanel.setHorizontalGroup(
+			gl_menuSendMailPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_menuSendMailPanel.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(label_1, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+					.addComponent(SendMailIcon, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblRecievedMails, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
-		gl_panel_1.setVerticalGroup(
-			gl_panel_1.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_1.createSequentialGroup()
+		gl_menuSendMailPanel.setVerticalGroup(
+			gl_menuSendMailPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_menuSendMailPanel.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
-						.addComponent(label_1)
+					.addGroup(gl_menuSendMailPanel.createParallelGroup(Alignment.LEADING)
+						.addComponent(SendMailIcon)
 						.addComponent(lblRecievedMails, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
-		panel_1.setLayout(gl_panel_1);
+		menuSendMailPanel.setLayout(gl_menuSendMailPanel);
 		
-		panel_2 = new JPanel();
-		
-		label_2 = new JLabel("");
-		label_2.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_refresh_20px.png")));
-		label_2.setToolTipText("Menu");
-		label_2.setHorizontalAlignment(SwingConstants.CENTER);
+		menuRefreshPanel = new JPanel();
+		menuRefreshPanel.setBackground(new java.awt.Color(29, 44, 99));
+		refreshIcon = new JLabel("");
+		refreshIcon.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_refresh_20px.png")));
+		refreshIcon.setToolTipText("Menu");
+		refreshIcon.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		lblRefresh = new JLabel();
+		lblRefresh.setForeground(Color.WHITE);
 		lblRefresh.setText("Refresh");
 		lblRefresh.setHorizontalAlignment(SwingConstants.CENTER);
 		lblRefresh.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		GroupLayout gl_panel_2 = new GroupLayout(panel_2);
-		gl_panel_2.setHorizontalGroup(
-			gl_panel_2.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_2.createSequentialGroup()
+		GroupLayout gl_menuRefreshPanel = new GroupLayout(menuRefreshPanel);
+		gl_menuRefreshPanel.setHorizontalGroup(
+			gl_menuRefreshPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_menuRefreshPanel.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(label_2, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+					.addComponent(refreshIcon, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblRefresh, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
-		gl_panel_2.setVerticalGroup(
-			gl_panel_2.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_2.createSequentialGroup()
+		gl_menuRefreshPanel.setVerticalGroup(
+			gl_menuRefreshPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_menuRefreshPanel.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-						.addComponent(label_2, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
+					.addGroup(gl_menuRefreshPanel.createParallelGroup(Alignment.LEADING)
+						.addComponent(refreshIcon, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblRefresh, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
-		panel_2.setLayout(gl_panel_2);
+		menuRefreshPanel.setLayout(gl_menuRefreshPanel);
 		
-		panel_3 = new JPanel();
-		
-		label_3 = new JLabel("");
-		label_3.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_customer_20px.png")));
-		label_3.setToolTipText("Menu");
-		label_3.setHorizontalAlignment(SwingConstants.CENTER);
+		menuUserProfilePanel = new JPanel();
+		menuUserProfilePanel.setBackground(new java.awt.Color(29, 44, 99));
+		userProfileIcon = new JLabel("");
+		userProfileIcon.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_customer_20px.png")));
+		userProfileIcon.setToolTipText("Menu");
+		userProfileIcon.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		lblProfile = new JLabel();
+		lblProfile.setForeground(Color.WHITE);
 		lblProfile.setText("Profile");
 		lblProfile.setHorizontalAlignment(SwingConstants.CENTER);
 		lblProfile.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		GroupLayout gl_panel_3 = new GroupLayout(panel_3);
-		gl_panel_3.setHorizontalGroup(
-			gl_panel_3.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_3.createSequentialGroup()
+		GroupLayout gl_menuUserProfilePanel = new GroupLayout(menuUserProfilePanel);
+		gl_menuUserProfilePanel.setHorizontalGroup(
+			gl_menuUserProfilePanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_menuUserProfilePanel.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(label_3, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
+					.addComponent(userProfileIcon, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblProfile, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
-		gl_panel_3.setVerticalGroup(
-			gl_panel_3.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_3.createSequentialGroup()
+		gl_menuUserProfilePanel.setVerticalGroup(
+			gl_menuUserProfilePanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_menuUserProfilePanel.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
-						.addComponent(label_3)
+					.addGroup(gl_menuUserProfilePanel.createParallelGroup(Alignment.LEADING)
+						.addComponent(userProfileIcon)
 						.addComponent(lblProfile, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
-		panel_3.setLayout(gl_panel_3);
+		menuUserProfilePanel.setLayout(gl_menuUserProfilePanel);
+		
+		
+		menuLogo.setVisible(true);
+		menuLogo.setHorizontalAlignment(SwingConstants.CENTER);
+		menuLogo.setForeground(Color.WHITE);
+		menuLogo.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		GroupLayout gl_jPanelMenu = new GroupLayout(jPanelMenu);
 		gl_jPanelMenu.setHorizontalGroup(
-			gl_jPanelMenu.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_jPanelMenu.createSequentialGroup()
-					.addGap(6)
-					.addComponent(lblMenu)
-					.addContainerGap(109, Short.MAX_VALUE))
+			gl_jPanelMenu.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_jPanelMenu.createSequentialGroup()
-					.addComponent(panel_3, GroupLayout.PREFERRED_SIZE, 150, Short.MAX_VALUE)
+					.addGroup(gl_jPanelMenu.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_jPanelMenu.createSequentialGroup()
+							.addGap(6)
+							.addComponent(lblMenu)
+							.addGap(1)
+							.addComponent(menuLogo, GroupLayout.PREFERRED_SIZE, 64, GroupLayout.PREFERRED_SIZE))
+						.addComponent(menuUserProfilePanel, GroupLayout.PREFERRED_SIZE, 150, Short.MAX_VALUE)
+						.addGroup(gl_jPanelMenu.createParallelGroup(Alignment.TRAILING, false)
+							.addComponent(menuRefreshPanel, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+							.addComponent(menuSendMailPanel, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+							.addComponent(menuNewMailPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)))
 					.addContainerGap())
-				.addGroup(gl_jPanelMenu.createSequentialGroup()
-					.addGroup(gl_jPanelMenu.createParallelGroup(Alignment.TRAILING, false)
-						.addComponent(panel_2, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-						.addComponent(panel_1, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-						.addComponent(panel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
-					.addContainerGap(18, Short.MAX_VALUE))
 		);
 		gl_jPanelMenu.setVerticalGroup(
 			gl_jPanelMenu.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_jPanelMenu.createSequentialGroup()
 					.addGap(10)
-					.addComponent(lblMenu)
+					.addGroup(gl_jPanelMenu.createParallelGroup(Alignment.LEADING, false)
+						.addComponent(menuLogo, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(lblMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addGap(18)
-					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
+					.addComponent(menuNewMailPanel, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(panel_1, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
+					.addComponent(menuSendMailPanel, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(panel_2, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
+					.addComponent(menuRefreshPanel, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(panel_3, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
+					.addComponent(menuUserProfilePanel, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap(197, Short.MAX_VALUE))
 		);
 		
-		label = new JLabel("");
-		label.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_new_message_20px.png")));
-		label.setToolTipText("Menu");
-		label.setHorizontalAlignment(SwingConstants.CENTER);
+		newMailIcon = new JLabel("");
+		newMailIcon.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_new_message_20px.png")));
+		newMailIcon.setToolTipText("Menu");
+		newMailIcon.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		lblNewMail = new JLabel();
+		lblNewMail.setForeground(Color.WHITE);
 		lblNewMail.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lblNewMail.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewMail.setText("New Mail");
-		GroupLayout gl_panel = new GroupLayout(panel);
-		gl_panel.setHorizontalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup()
+		GroupLayout gl_menuNewMailPanel = new GroupLayout(menuNewMailPanel);
+		gl_menuNewMailPanel.setHorizontalGroup(
+			gl_menuNewMailPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_menuNewMailPanel.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(label, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+					.addComponent(newMailIcon, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
 					.addGap(18)
 					.addComponent(lblNewMail, GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE))
 		);
-		gl_panel.setVerticalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup()
+		gl_menuNewMailPanel.setVerticalGroup(
+			gl_menuNewMailPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_menuNewMailPanel.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(label)
+					.addGroup(gl_menuNewMailPanel.createParallelGroup(Alignment.LEADING)
+						.addComponent(newMailIcon)
 						.addComponent(lblNewMail, GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE))
 					.addContainerGap())
 		);
-		panel.setLayout(gl_panel);
+		menuNewMailPanel.setLayout(gl_menuNewMailPanel);
 		jPanelMenu.setLayout(gl_jPanelMenu);
 		getContentPane().setLayout(layout);
 
@@ -448,7 +466,7 @@ public class MainForm extends javax.swing.JFrame {
 	private void mailMenuActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_mailMenuActionPerformed
 
 	}// GEN-LAST:event_mailMenuActionPerformed
-
+	
 	private void newMailItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_newMailItemActionPerformed
 		HTMLEditorPane editor = new HTMLEditorPane();
 		JFrame frame = new JFrame();
@@ -484,13 +502,13 @@ public class MainForm extends javax.swing.JFrame {
 	private javax.swing.JTextField toInput;
 	private javax.swing.JLabel toLabel;
 	private JList mailList;
-	private JLabel label;
-	private JLabel label_1;
-	private JLabel label_2;
-	private JLabel label_3;
-	private JPanel panel_1;
-	private JPanel panel_2;
-	private JPanel panel_3;
+	private JLabel newMailIcon;
+	private JLabel SendMailIcon;
+	private JLabel refreshIcon;
+	private JLabel userProfileIcon;
+	private JPanel menuSendMailPanel;
+	private JPanel menuRefreshPanel;
+	private JPanel menuUserProfilePanel;
 	private JLabel lblNewMail;
 	private JLabel lblRecievedMails;
 	private JLabel lblRefresh;
