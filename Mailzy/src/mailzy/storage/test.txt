@@ -1,0 +1,4 @@
+Gmail.com Smtp.gmail.com
+Outlook.com Smtp.live.com
+Yahoo.com Mail.yahoo.com
+Abv.bg  pop3.abv.bg

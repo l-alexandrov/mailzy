@@ -5,25 +5,23 @@
  */
 package mailzy;
 
-import java.awt.Color;
+
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import javax.swing.JFrame;
 import javax.swing.ImageIcon;
-import mailzy.storage.Authenticator;
-import java.awt.event.ContainerAdapter;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputMethodListener;
-import java.awt.event.InputMethodEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.WindowEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Scanner;
+import javax.swing.JFrame;
 
 
 /**
@@ -395,10 +393,31 @@ private void passwordVisibleBtn() {
         else{
              this.setVisible(false);
         }
+        String fullAccount=account.getText();
+        String mailSystem=fullAccount.substring(fullAccount.lastIndexOf("@")+1);
+        System.out.println(mailSystem); //print only text after @
         
     }//GEN-LAST:event_loginButton1ActionPerformed
         int passwdClicked=0;
         int passwdVisibleClicked=2;
+        
+    private ArrayList<String> test() throws FileNotFoundException, IOException, URISyntaxException{
+        URL url = getClass().getResource("..//mailzy//storage//test.txt");
+        File file = new File(url.toURI());
+        System.out.println(file);
+        ///BufferedReader br = new BufferedReader(new FileReader(file));
+        ///String line= br.readLine();
+        ArrayList<String> arr = new ArrayList<String>();
+        String path = file.toString();
+        Scanner sc = new Scanner(new File(path));
+        while(sc.hasNextLine()){
+            arr.add(sc.nextLine());
+        } 
+        for(String column: arr ){
+            System.out.println(column); //list all data
+        }
+        return arr;
+    }
     /**
      * @param args the command line arguments
      */
