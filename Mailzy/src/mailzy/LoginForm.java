@@ -21,18 +21,23 @@ import java.awt.event.InputMethodListener;
 import java.awt.event.InputMethodEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.WindowEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
  *
  * @author hrist
  */
-public class LoginForm extends javax.swing.JFrame {
+public class LoginForm extends javax.swing.JDialog {
     
     /**
      * Creates new form LoginForm
      */
-    public LoginForm() {
+    public LoginForm(JFrame frame) {
+        super(frame, true);
+        this.setDefaultCloseOperation(0);
         initComponents();
         this.setResizable(false);
         passwordVisible.setVisible(false);
@@ -55,36 +60,7 @@ public class LoginForm extends javax.swing.JFrame {
         passwordIcon = new javax.swing.JLabel();
         emailIcon1 = new javax.swing.JLabel();
         account = new javax.swing.JTextField();
-        account.addFocusListener(new FocusAdapter() {
-        	@Override
-        	public void focusGained(FocusEvent e) {
-        		if("Enter your account".equals(account.getText()))
-        	        account.setText("");
-        	}
-        	@Override
-        	public void focusLost(FocusEvent e) {
-        		if(account.getText().isBlank()){
-                    account.setText("Enter your account");
-                }
-        	}
-        });
-        
-               
         password = new javax.swing.JPasswordField();
-        password.addFocusListener(new FocusAdapter() {
-        	public void focusGained(FocusEvent e) {
-        		if("Enter your password".equals(password.getText())) {
-        			password.setText("");
-        			passwordVisibleBtn();
-        		}
-        	}
-        	@Override
-        	public void focusLost(FocusEvent e) {
-        		if(password.getText().isBlank() || "Enter your password".equals(password.getText())) {
-        			password.setText("Enter your password");
-        		}
-        	}
-        });
         passwordVisible = new javax.swing.JLabel();
         loginButton1 = new javax.swing.JButton();
         gmailLabel = new javax.swing.JLabel();
@@ -94,7 +70,6 @@ public class LoginForm extends javax.swing.JFrame {
         outlookLabel = new javax.swing.JLabel();
         errorLabel = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login");
         setBackground(new java.awt.Color(255, 255, 255));
         setFocusCycleRoot(false);
@@ -154,7 +129,7 @@ public class LoginForm extends javax.swing.JFrame {
 
         password.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         password.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        password.setText("Enter your password");
+        password.setText("SamlePassword");
         password.setPreferredSize(new java.awt.Dimension(93, 28));
         password.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -173,6 +148,7 @@ public class LoginForm extends javax.swing.JFrame {
         loginButton1.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         loginButton1.setForeground(new java.awt.Color(255, 255, 255));
         loginButton1.setText("Login");
+        loginButton1.setToolTipText("");
         loginButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loginButton1ActionPerformed(evt);
@@ -242,7 +218,7 @@ public class LoginForm extends javax.swing.JFrame {
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(rememberMe)
                                     .addGap(40, 40, 40))))))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(gmailLabel)
@@ -305,9 +281,9 @@ public class LoginForm extends javax.swing.JFrame {
         ImageIcon iconVisible = new ImageIcon(getClass().getResource("..//swing//images//icons8_eye_40px.png"));
         //ImageIcon iconInvisible = new ImageIcon(getClass().getResource("icons8_invisible_40px.png")); // another way but must png file exist in mailzy folder
         ImageIcon iconInvisible = new ImageIcon(getClass().getResource("..//swing//images//icons8_invisible_40px.png"));
-    private void passwordVisibleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_passwordVisibleMouseClicked        
+    private void passwordVisibleMouseClicked(java.awt.event.MouseEvent evt) {                                                     
     	passwordIconChange();
-    }//GEN-LAST:event_passwordVisibleMouseClicked
+    }                                            
     private void passwordIconChange() { //Change text to * or * to text on click and change icons
     	if(passwdVisibleClicked%2==0){
             password.setEchoChar((char)0);
@@ -417,10 +393,7 @@ private void passwordVisibleBtn() {
             errorLabel.setText("Plese enter email and password!");
         }
         else{
-            errorLabel.setText("");
-            MainForm mf = new MainForm();
-            mf.setVisible(true);
-            
+             this.setVisible(false);
         }
         
     }//GEN-LAST:event_loginButton1ActionPerformed

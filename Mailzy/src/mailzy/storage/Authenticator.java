@@ -10,7 +10,7 @@ import java.security.*;
 import java.security.spec.*;
 import java.util.*;
 import javax.crypto.*;
-
+import javax.mail.*;
 /**
  *
  * @author lalexandrov
@@ -100,8 +100,32 @@ public class Authenticator {
         return this.password;
     }
     public boolean isAuthenticated(){
+        try {
+            Properties props = System.getProperties();
+            props.setProperty("mail.store.protocol", "imaps");
+
+            Session session = Session.getDefaultInstance(props, null);
+            // session.setDebug(true);
+            Store store = session.getStore("imaps");
+            store.connect("imap.gmail.com",this.username, this.password);
+            //Folder folder = store.getFolder("Inbox");
+            /* Others GMail folders :
+             * [Gmail]/All Mail   This folder contains all of your Gmail messages.
+             * [Gmail]/Drafts     Your drafts.
+             * [Gmail]/Sent Mail  Messages you sent to other people.
+             * [Gmail]/Spam       Messages marked as spam.
+             * [Gmail]/Starred    Starred messages.
+             * [Gmail]/Trash      Messages deleted from Gmail.
+             */
+            //folder.open(Folder.READ_WRITE);
+            System.out.println(store.isConnected());
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        
         return this.username!= null && this.password != null
                 && !this.username.isBlank() && !this.password.isBlank();
+        
             
     }
     

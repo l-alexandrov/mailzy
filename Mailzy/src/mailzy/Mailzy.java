@@ -8,6 +8,7 @@ package mailzy;
 import java.sql.SQLException;
 
 import javax.swing.JFrame;
+import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
 import mailzy.storage.*;
 
 /**
@@ -15,16 +16,15 @@ import mailzy.storage.*;
  * @author lalexandrov
  */
 public class Mailzy {
-    
     public Mailzy(){
-        LoginForm loginForm = new LoginForm();
+
         try{
             Authenticator authenticator = new Authenticator();
-
-            while(!authenticator.isAuthenticated()){
-                loginForm.setVisible(true); 
-            }
-            this.openMainWindow();
+            
+            LoginForm loginForm = new LoginForm(this.mainApp);
+            loginForm.setVisible(true); 
+            authenticator.isAuthenticated();
+                this.openMainWindow();
         }
         catch(Exception e){
             System.exit(1);
@@ -38,7 +38,8 @@ public class Mailzy {
   
     
     private void openMainWindow(){
-        JFrame form =  new MainForm();        
+        this.mainApp =  new MainForm();        
     }
     
+    private JFrame mainApp = null;
 }
