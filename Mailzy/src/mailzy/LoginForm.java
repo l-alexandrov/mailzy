@@ -67,6 +67,36 @@ public class LoginForm extends javax.swing.JDialog {
         rememberMe = new javax.swing.JCheckBox();
         outlookLabel = new javax.swing.JLabel();
         errorLabel = new javax.swing.JLabel();
+        
+        account.addFocusListener(new FocusAdapter() {
+        	@Override
+        	public void focusGained(FocusEvent e) {
+        		if("Enter your account".equals(account.getText()))
+        	        account.setText("");
+        	}
+        	@Override
+        	public void focusLost(FocusEvent e) {
+        		if(account.getText().isBlank()){
+                    account.setText("Enter your account");
+                }
+        	}
+        });
+        
+        password = new javax.swing.JPasswordField();
+        password.addFocusListener(new FocusAdapter() {
+        	public void focusGained(FocusEvent e) {
+        		if("Enter your password".equals(password.getText())) {
+        			password.setText("");
+        			passwordVisibleBtn();
+        		}
+        	}
+        	@Override
+        	public void focusLost(FocusEvent e) {
+        		if(password.getText().isBlank() || "Enter your password".equals(password.getText())) {
+        			password.setText("Enter your password");
+        		}
+        	}
+        });
 
         setTitle("Login");
         setBackground(new java.awt.Color(255, 255, 255));
@@ -127,7 +157,7 @@ public class LoginForm extends javax.swing.JDialog {
 
         password.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         password.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        password.setText("SamlePassword");
+        password.setText("Enter your password");
         password.setPreferredSize(new java.awt.Dimension(93, 28));
         password.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
