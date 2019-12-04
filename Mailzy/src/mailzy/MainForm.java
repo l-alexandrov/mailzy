@@ -298,6 +298,10 @@ public class MainForm extends javax.swing.JFrame {
 			public void mouseEntered(MouseEvent e) {
 			menuNewMailPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));	
 			}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				showNewMailForm();
+			}
 		});
 		menuNewMailPanel.setBackground(new java.awt.Color(29, 44, 99));
 		menuSendMailPanel = new JPanel();
@@ -462,6 +466,12 @@ public class MainForm extends javax.swing.JFrame {
 		);
 		
 		newMailIcon = new JLabel("");
+		newMailIcon.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				showNewMailForm();
+			}
+		});
 		newMailIcon.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_new_message_20px.png")));
 		newMailIcon.setToolTipText("New Mail");
 		newMailIcon.setHorizontalAlignment(SwingConstants.CENTER);
@@ -501,6 +511,11 @@ public class MainForm extends javax.swing.JFrame {
 	}// GEN-LAST:event_mailMenuActionPerformed
 	
 	private void newMailItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_newMailItemActionPerformed
+		showNewMailForm();
+		
+	}// GEN-LAST:event_newMailItemActionPerformed
+	
+	private void showNewMailForm() {
 		HTMLEditorPane editor = new HTMLEditorPane();
 		JFrame frame = new JFrame();
 		JMenuBar menuBar = new JMenuBar();
@@ -514,8 +529,13 @@ public class MainForm extends javax.swing.JFrame {
 		frame.setSize(800, 600);
 		frame.getContentPane().add(editor);
 		frame.setVisible(true);
-	}// GEN-LAST:event_newMailItemActionPerformed
-
+		
+		//if (frame.getMenuBar() != null) {
+		//	   System.out.println("Frame1 is opened");
+		//	} else if (frame.getMenuBar() == null) {
+		//		System.out.println("Frame2 is closed"); 
+		//	}
+	}
 	private ArrayList<String[]> mailListDetails;
 	private SQLiteConnector connection;
 	// Variables declaration - do not modify//GEN-BEGIN:variables
