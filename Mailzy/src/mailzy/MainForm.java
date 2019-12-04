@@ -15,6 +15,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.MenuListener;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
@@ -285,21 +286,37 @@ public class MainForm extends javax.swing.JFrame {
 					// System.out.println("DONE");
 				}
 			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			lblMenu.setCursor(new Cursor(Cursor.HAND_CURSOR));	
+			}
 		});
 		
 		JPanel menuNewMailPanel = new JPanel();
+		menuNewMailPanel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			menuNewMailPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));	
+			}
+		});
 		menuNewMailPanel.setBackground(new java.awt.Color(29, 44, 99));
 		menuSendMailPanel = new JPanel();
+		menuSendMailPanel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				menuSendMailPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));	
+			}
+		});
 		menuSendMailPanel.setBackground(new java.awt.Color(29, 44, 99));
 		SendMailIcon = new JLabel("");
 		SendMailIcon.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_send_email_20px.png")));
-		SendMailIcon.setToolTipText("Menu");
+		SendMailIcon.setToolTipText("Recieved");
 		SendMailIcon.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		lblRecievedMails = new JLabel();
 		lblRecievedMails.setForeground(Color.WHITE);
-		lblRecievedMails.setText("Recieved Mails");
 		lblRecievedMails.setHorizontalAlignment(SwingConstants.CENTER);
+		lblRecievedMails.setText("Recieved");
 		lblRecievedMails.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		GroupLayout gl_menuSendMailPanel = new GroupLayout(menuSendMailPanel);
 		gl_menuSendMailPanel.setHorizontalGroup(
@@ -321,12 +338,18 @@ public class MainForm extends javax.swing.JFrame {
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		menuSendMailPanel.setLayout(gl_menuSendMailPanel);
-		
+		//menuSendMailPanel.setToolTipText("Send");
 		menuRefreshPanel = new JPanel();
+		menuRefreshPanel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			menuRefreshPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));	
+			}
+		});
 		menuRefreshPanel.setBackground(new java.awt.Color(29, 44, 99));
 		refreshIcon = new JLabel("");
 		refreshIcon.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_refresh_20px.png")));
-		refreshIcon.setToolTipText("Menu");
+		refreshIcon.setToolTipText("Refresh");
 		refreshIcon.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		lblRefresh = new JLabel();
@@ -356,10 +379,20 @@ public class MainForm extends javax.swing.JFrame {
 		menuRefreshPanel.setLayout(gl_menuRefreshPanel);
 		
 		menuUserProfilePanel = new JPanel();
+		menuUserProfilePanel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			menuUserProfilePanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+		});
 		menuUserProfilePanel.setBackground(new java.awt.Color(29, 44, 99));
 		userProfileIcon = new JLabel("");
 		userProfileIcon.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_customer_20px.png")));
-		userProfileIcon.setToolTipText("Menu");
+		userProfileIcon.setToolTipText("Profile");
 		userProfileIcon.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		lblProfile = new JLabel();
@@ -430,7 +463,7 @@ public class MainForm extends javax.swing.JFrame {
 		
 		newMailIcon = new JLabel("");
 		newMailIcon.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_new_message_20px.png")));
-		newMailIcon.setToolTipText("Menu");
+		newMailIcon.setToolTipText("New Mail");
 		newMailIcon.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		lblNewMail = new JLabel();
