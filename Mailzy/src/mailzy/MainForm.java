@@ -217,7 +217,8 @@ public class MainForm extends javax.swing.JFrame {
 						.addComponent(speechBtn, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)))
 		);
 		JLabel menuLogo = new JLabel("Mailzy");
-		JLabel lblMenu = new JLabel("");
+		JLabel lblMenu = new JLabel();  
+		
 		lblMenu.setToolTipText("Menu");
 		lblMenu.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/icons8_menu_35px_3.png")));
 		lblMenu.setHorizontalAlignment(SwingConstants.CENTER);
@@ -386,7 +387,8 @@ public class MainForm extends javax.swing.JFrame {
 		menuUserProfilePanel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				
+				mailList.setVisible(false);
+				detailsPanel.setVisible(false);				
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -502,8 +504,12 @@ public class MainForm extends javax.swing.JFrame {
 		menuNewMailPanel.setLayout(gl_menuNewMailPanel);
 		jPanelMenu.setLayout(gl_jPanelMenu);
 		getContentPane().setLayout(layout);
-
+		
+		
+		
 		pack();
+		
+		
 	}// </editor-fold>//GEN-END:initComponents
 
 	private void mailMenuActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_mailMenuActionPerformed
@@ -515,6 +521,14 @@ public class MainForm extends javax.swing.JFrame {
 		
 	}// GEN-LAST:event_newMailItemActionPerformed
 	
+	private void showMenu(JPanel panelName, JLabel labelname) {
+		boolean isSideBarOpen = false;
+		if (isSideBarOpen == false) {
+			//TODO sideBar function
+		}
+	}
+	
+	
 	private void showNewMailForm() {
 		HTMLEditorPane editor = new HTMLEditorPane();
 		JFrame frame = new JFrame();
@@ -525,7 +539,7 @@ public class MainForm extends javax.swing.JFrame {
 		frame.setJMenuBar(menuBar);
 
 		frame.setTitle("New Mail");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frame.setSize(800, 600);
 		frame.getContentPane().add(editor);
 		frame.setVisible(true);

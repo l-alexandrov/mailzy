@@ -45,11 +45,12 @@ public class LoginForm extends javax.swing.JDialog {
      */
     public LoginForm(JFrame frame) {
         super(frame, true);
-        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);  //just for testing
         initComponents();
         this.setResizable(false);
         passwordVisible.setVisible(false);
         account.setText("Enter your account");
+        
     }
 
     /**
@@ -68,6 +69,8 @@ public class LoginForm extends javax.swing.JDialog {
         passwordIcon = new javax.swing.JLabel();
         emailIcon1 = new javax.swing.JLabel();
         account = new javax.swing.JTextField();
+        account.setOpaque(false);
+        account.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
         account.setToolTipText("Account");
         password = new javax.swing.JPasswordField();
         passwordVisible = new javax.swing.JLabel();
@@ -107,20 +110,20 @@ public class LoginForm extends javax.swing.JDialog {
         });
         
         password_1 = new javax.swing.JPasswordField();
-        password_1.setOpaque(false);
         password_1.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        password_1.setOpaque(false);
         password_1.setToolTipText("Password");
         password_1.addFocusListener(new FocusAdapter() {
         	public void focusGained(FocusEvent e) {
-        		if("Enter your password".equals(password.getText())) {
-        			password.setText("");
+        		if("Enter your password".equals(password_1.getText())) {
+        			password_1.setText("");
         			passwordVisibleBtn();
         		}
         	}
         	@Override
         	public void focusLost(FocusEvent e) {
-        		if(password.getText().isBlank() || "Enter your password".equals(password.getText())) {
-        			password.setText("Enter your password");
+        		if(password_1.getText().isBlank() || "Enter your password".equals(password_1.getText())) {
+        			password_1.setText("Enter your password");
         		}
         	}
         });
