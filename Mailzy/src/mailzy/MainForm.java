@@ -528,27 +528,20 @@ public class MainForm extends javax.swing.JFrame {
 		}
 	}
 	
-	
-	private void showNewMailForm() {
-		HTMLEditorPane editor = new HTMLEditorPane();
-		JFrame frame = new JFrame();
-		JMenuBar menuBar = new JMenuBar();
+	HTMLEditorPane editor = new HTMLEditorPane();
+	JFrame frame = new JFrame();
+	JMenuBar menuBar = new JMenuBar();
+
+	private void showNewMailForm() {		
 		menuBar.add(editor.getEditMenu());
 		menuBar.add(editor.getFormatMenu());
 		menuBar.add(editor.getInsertMenu());
 		frame.setJMenuBar(menuBar);
-
 		frame.setTitle("New Mail");
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frame.setSize(800, 600);
 		frame.getContentPane().add(editor);
 		frame.setVisible(true);
-		
-		//if (frame.getMenuBar() != null) {
-		//	   System.out.println("Frame1 is opened");
-		//	} else if (frame.getMenuBar() == null) {
-		//		System.out.println("Frame2 is closed"); 
-		//	}
 	}
 	private ArrayList<String[]> mailListDetails;
 	private SQLiteConnector connection;
