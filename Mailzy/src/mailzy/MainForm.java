@@ -14,6 +14,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.MenuListener;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
@@ -224,68 +225,52 @@ public class MainForm extends javax.swing.JFrame {
 		lblMenu.setHorizontalAlignment(SwingConstants.CENTER);
 
 		lblMenu.addMouseListener(new MouseAdapter() {
-			boolean sideBarOpen = false;
+			//boolean sideBarOpen = false;
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
-				if (sideBarOpen == false) {
-
-					// System.out.println( jPanelMenu.getLocationOnScreen().getY() -
-					// getContentPane().getLocationOnScreen().getY());
-					// System.out.println(jPanelMenu.getSize().height);
-
-					// jPanelMenu.setSize(jPanelMenu.getSize().w,jPanelMenu.getSize().height);
-					Thread th = new Thread() {
-						@Override
-						public void run() {
-							for (int i = 45; i <= 150; i++) {
-								try {
-									Thread.sleep(2);
-								} catch (InterruptedException ex) {
-
-								}
-								jPanelMenu.setSize(i, jPanelMenu.getSize().height);
-								lblMenu.setLocation(i - 37, 10);
-							}
-							// System.out.println(lblMenu.getLocation());
-							
-
-						}
-
-					};
-					th.start();
-					//menuLogo.setLocation(113, 10);
-					//menuLogo.setVisible(true);
-
-					sideBarOpen = true;
-				}
-
-				else if (sideBarOpen == true) {
-					//menuLogo.setVisible(false);
-					Thread th = new Thread() {
-						@Override
-						public void run() {
-							for (int i = 150; i >= 45; i--) {
-								try {
-									Thread.sleep(2);
-								} catch (InterruptedException ex) {
-
-								}
-								jPanelMenu.setSize(i, jPanelMenu.getSize().height);
-								lblMenu.setLocation(i - 37, 10);
-							}
-							// System.out.println(lblMenu.getLocation());
-
-						}
-
-					};
-					th.start();
-
-					sideBarOpen = false;
-
-					// System.out.println("DONE");
-				}
+				/*
+				 * 
+				 * if (sideBarOpen == false) {
+				 * 
+				 * // System.out.println( jPanelMenu.getLocationOnScreen().getY() - //
+				 * getContentPane().getLocationOnScreen().getY()); //
+				 * System.out.println(jPanelMenu.getSize().height);
+				 * 
+				 * // jPanelMenu.setSize(jPanelMenu.getSize().w,jPanelMenu.getSize().height);
+				 * Thread th = new Thread() {
+				 * 
+				 * @Override public void run() { for (int i = 45; i <= 150; i++) { try {
+				 * Thread.sleep(2); } catch (InterruptedException ex) {
+				 * 
+				 * } jPanelMenu.setSize(i, jPanelMenu.getSize().height); lblMenu.setLocation(i -
+				 * 37, 10); } // System.out.println(lblMenu.getLocation());
+				 * 
+				 * 
+				 * }
+				 * 
+				 * }; th.start(); //menuLogo.setLocation(113, 10); //menuLogo.setVisible(true);
+				 * 
+				 * sideBarOpen = true; }
+				 * 
+				 * else if (sideBarOpen == true) { //menuLogo.setVisible(false); Thread th = new
+				 * Thread() {
+				 * 
+				 * @Override public void run() { for (int i = 150; i >= 45; i--) { try {
+				 * Thread.sleep(2); } catch (InterruptedException ex) {
+				 * 
+				 * } jPanelMenu.setSize(i, jPanelMenu.getSize().height); lblMenu.setLocation(i -
+				 * 37, 10); } // System.out.println(lblMenu.getLocation());
+				 * 
+				 * }
+				 * 
+				 * }; th.start();
+				 * 
+				 * sideBarOpen = false;
+				 * 
+				 * // System.out.println("DONE"); }
+				 */
+			showMenu(jPanelMenu, lblMenu);	
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -520,28 +505,98 @@ public class MainForm extends javax.swing.JFrame {
 		showNewMailForm();
 		
 	}// GEN-LAST:event_newMailItemActionPerformed
-	
+	boolean isSideBarOpen = false;
 	private void showMenu(JPanel panelName, JLabel labelname) {
-		boolean isSideBarOpen = false;
+		
 		if (isSideBarOpen == false) {
 			//TODO sideBar function
-		}
+				Thread th = new Thread() {
+					@Override
+					public void run() {
+						for (int i = 45; i <= 150; i++) {
+							try {
+								Thread.sleep(2);
+							} catch (InterruptedException ex) {
+
+							}
+							panelName.setSize(i, panelName.getSize().height);
+							labelname.setLocation(i - 37, 10);
+						}
+						// System.out.println(lblMenu.getLocation());
+						
+
+					}
+
+				};
+				th.start();
+				//menuLogo.setLocation(113, 10);
+				//menuLogo.setVisible(true);
+
+				isSideBarOpen = true;
+			}
+
+			else if (isSideBarOpen == true) {
+				//menuLogo.setVisible(false);
+				Thread th = new Thread() {
+					public void run() {
+						for (int i = 150; i >= 45; i--) {
+							try {
+								Thread.sleep(2);
+							} catch (InterruptedException ex) {
+
+							}
+							panelName.setSize(i, panelName.getSize().height);
+							labelname.setLocation(i - 37, 10);
+						}
+						// System.out.println(lblMenu.getLocation());
+
+					}
+
+				};
+				th.start();
+
+				isSideBarOpen = false;
+
+				// System.out.println("DONE");
+			}
+		
+		
 	}
 	
 	HTMLEditorPane editor = new HTMLEditorPane();
 	JFrame frame = new JFrame();
 	JMenuBar menuBar = new JMenuBar();
-
-	private void showNewMailForm() {		
+	JButton button = new JButton("Send");
+	
+	private void showNewMailForm() {
+		//TODO add labels and textfields
 		menuBar.add(editor.getEditMenu());
 		menuBar.add(editor.getFormatMenu());
 		menuBar.add(editor.getInsertMenu());
 		frame.setJMenuBar(menuBar);
+		
 		frame.setTitle("New Mail");
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		frame.setSize(800, 600);
+		frame.getContentPane().setLayout(null);
+		frame.setSize(800, 770);
+		frame.setResizable(false);
+		button.setBounds(680,580,100,20);
+		frame.getContentPane().add(button);
+		editor.setBounds(0, 80, 780, 600);
 		frame.getContentPane().add(editor);
 		frame.setVisible(true);
+		button.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().setBackground(Color.red); //Test
+				
+			}
+		});
+		
+		
+		//frame.getContentPane().add(detailsPanel,BorderLayout.CENTER); 
+		//detailsPanel.add(c4Panel,BorderLayout.CENTER); 
 	}
 	private ArrayList<String[]> mailListDetails;
 	private SQLiteConnector connection;
