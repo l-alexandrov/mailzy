@@ -11,27 +11,15 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.swing.ImageIcon;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.WindowEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 import javax.swing.JFrame;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import javax.swing.JPasswordField;
-import javax.swing.border.LineBorder;
-import java.awt.Color;
-import javax.swing.border.BevelBorder;
-import javax.swing.UIManager;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.MatteBorder;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import mailzy.storage.Authenticator;
 
 
 /**
@@ -43,10 +31,11 @@ public class LoginForm extends javax.swing.JDialog {
     /**
      * Creates new form LoginForm
      */
-    public LoginForm(JFrame frame) {
+    public LoginForm(JFrame frame, Authenticator authenticator) {
         super(frame, true);
-        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);  //just for testing
+        //setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);  //just for testing
         initComponents();
+        this.authenticator = authenticator;
         this.setResizable(false);
         passwordVisible.setVisible(false);
         account.setText("Enter your account");
@@ -69,68 +58,24 @@ public class LoginForm extends javax.swing.JDialog {
         passwordIcon = new javax.swing.JLabel();
         emailIcon1 = new javax.swing.JLabel();
         account = new javax.swing.JTextField();
-        account.setOpaque(false);
-        account.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
-        account.setToolTipText("Account");
         password = new javax.swing.JPasswordField();
         passwordVisible = new javax.swing.JLabel();
         loginButton1 = new javax.swing.JButton();
-        loginButton1.addKeyListener(new KeyAdapter() {
-        	@Override
-        	public void keyPressed(KeyEvent e) {
-        		if(e.getKeyCode() == KeyEvent.VK_ENTER) 
-                    System.out.println("Enter clicked");
-        			loginBtnClicked();
-        	}
-        	});
-
         gmailLabel = new javax.swing.JLabel();
-        gmailLabel.setToolTipText("Gmail");
         abvLabel = new javax.swing.JLabel();
-        abvLabel.setToolTipText("ABV");
         jLabel2 = new javax.swing.JLabel();
         rememberMe = new javax.swing.JCheckBox();
-        rememberMe.setToolTipText("Remember");
         outlookLabel = new javax.swing.JLabel();
-        outlookLabel.setToolTipText("Outlook");
         errorLabel = new javax.swing.JLabel();
-        
-        account.addFocusListener(new FocusAdapter() {
-        	@Override
-        	public void focusGained(FocusEvent e) {
-        		if("Enter your account".equals(account.getText()))
-        	        account.setText("");
-        	}
-        	@Override
-        	public void focusLost(FocusEvent e) {
-        		if(account.getText().isBlank()){
-                    account.setText("Enter your account");
-                }
-        	}
-        });
-        
-        password_1 = new javax.swing.JPasswordField();
-        password_1.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
-        password_1.setOpaque(false);
-        password_1.setToolTipText("Password");
-        password_1.addFocusListener(new FocusAdapter() {
-        	public void focusGained(FocusEvent e) {
-        		if("Enter your password".equals(password_1.getText())) {
-        			password_1.setText("");
-        			passwordVisibleBtn();
-        		}
-        	}
-        	@Override
-        	public void focusLost(FocusEvent e) {
-        		if(password_1.getText().isBlank() || "Enter your password".equals(password_1.getText())) {
-        			password_1.setText("Enter your password");
-        		}
-        	}
-        });
 
         setTitle("Login");
         setBackground(new java.awt.Color(255, 255, 255));
         setFocusCycleRoot(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel1.setPreferredSize(new java.awt.Dimension(400, 727));
 
@@ -176,22 +121,25 @@ public class LoginForm extends javax.swing.JDialog {
         account.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         account.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         account.setText("Enter you account");
-        account.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                accountMouseEntered(evt);
+        account.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                accountFocusGained(evt);
             }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                accountMouseExited(evt);
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                accountFocusLost(evt);
             }
         });
 
-        password_1.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        password_1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        password_1.setText("Enter your password");
-        password_1.setPreferredSize(new java.awt.Dimension(93, 28));
-        password_1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                passwordMouseClicked(evt);
+        password.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        password.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        password.setText("SamplePassword");
+        password.setPreferredSize(new java.awt.Dimension(93, 28));
+        password.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                passwordFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                passwordFocusLost(evt);
             }
         });
 
@@ -206,7 +154,7 @@ public class LoginForm extends javax.swing.JDialog {
         loginButton1.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         loginButton1.setForeground(new java.awt.Color(255, 255, 255));
         loginButton1.setText("Login");
-        loginButton1.setToolTipText("Login");
+        loginButton1.setToolTipText("");
         loginButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loginButton1ActionPerformed(evt);
@@ -236,6 +184,7 @@ public class LoginForm extends javax.swing.JDialog {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Register");
 
+        rememberMe.setSelected(true);
         rememberMe.setText("Remember me");
 
         outlookLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/swing/images/icons8_microsoft_outlook_35px_1.png"))); // NOI18N
@@ -266,7 +215,7 @@ public class LoginForm extends javax.swing.JDialog {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(loginButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(password_1, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(passwordVisible, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -305,7 +254,7 @@ public class LoginForm extends javax.swing.JDialog {
                             .addComponent(passwordIcon)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(35, 35, 35)
-                        .addComponent(password_1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(loginButton1)
                 .addGap(16, 16, 16)
@@ -339,45 +288,21 @@ public class LoginForm extends javax.swing.JDialog {
         ImageIcon iconVisible = new ImageIcon(getClass().getResource("..//swing//images//icons8_eye_40px.png"));
         //ImageIcon iconInvisible = new ImageIcon(getClass().getResource("icons8_invisible_40px.png")); // another way but must png file exist in mailzy folder
         ImageIcon iconInvisible = new ImageIcon(getClass().getResource("..//swing//images//icons8_invisible_40px.png"));
-    private void passwordVisibleMouseClicked(java.awt.event.MouseEvent evt) {                                                     
-    	passwordIconChange();
-    }                                            
-    private void passwordIconChange() { //Change text to * or * to text on click and change icons
+        
+        
+    private void passwordVisibleMouseClicked(java.awt.event.MouseEvent evt) {  //Change text to * or * to text on click and change icons                                                   
     	if(passwdVisibleClicked==false){
-            password_1.setEchoChar((char)0);
+            password.setEchoChar((char)0);
             passwdVisibleClicked=true;
             passwordVisible.setIcon(iconVisible);
         }
         else{
-            password_1.setEchoChar('*');
+            password.setEchoChar('*');
             passwdVisibleClicked=false;
             passwordVisible.setIcon(iconInvisible);
         }
     }
-    private void passwordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_passwordMouseClicked
-    	passwordVisibleBtn();
-    }//GEN-LAST:event_passwordMouseClicked
-private void passwordVisibleBtn() { 
-	if(passwdClicked=false){
-        password_1.setText("");
-        passwdClicked=true;
-    }
-    passwordVisible.setVisible(true);
-}
-
-    private void accountMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accountMouseExited
-        // TODO add your handling code here:
-        if(account.getText().isBlank()){
-            account.setText("Enter your account");
-        }
-    }//GEN-LAST:event_accountMouseExited
-
-    private void accountMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accountMouseEntered
-        // TODO add your handling code here:
-        if("Enter your account".equals(account.getText()))
-        account.setText("");
-    }//GEN-LAST:event_accountMouseEntered
-
+    
     private void gmailLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_gmailLabelMouseClicked
         // TODO add your handling code here:
         String url = "https://accounts.google.com/signup/v2/webcreateaccount?service=accountsettings&continue=https%3A%2F%2Fmyaccount.google.com%2Fb%2F110810760468130681345%2F%3Futm_source%3Dsign_in_no_continue%26nlr%3D1%26pageId%3Dnone&dsh=S-1710728375%3A1574237796118791&gmb=exp&biz=false&flowName=GlifWebSignIn&flowEntry=SignUp";
@@ -446,33 +371,67 @@ private void passwordVisibleBtn() {
     }//GEN-LAST:event_outlookLabelMouseClicked
 
     private void loginButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButton1ActionPerformed
-        // TODO add your handling code here:
-        loginBtnClicked();
-    }//GEN-LAST:event_loginButton1ActionPerformed
-    
-    private void loginBtnClicked() {
-    	if( account.getText().isBlank() || password_1.getText().isBlank() || "Enter your account".equals(account.getText())){
+        if( account.getText().isBlank() || String.valueOf(password.getPassword()).isBlank() 
+        || "Enter your account".equals(account.getText())){
             errorLabel.setText("Plese enter email and password!");
+        } else{             
+            String fullAccount=account.getText();
+            int firstIndex = fullAccount.indexOf("@");
+            //System.out.println("First occurrence of char @"+ 
+            //      " is found at : " + firstIndex); 
+            char[] passwordText =  password.getPassword();
+            if(firstIndex>0){
+                String mailSystem=fullAccount.substring(fullAccount.lastIndexOf("@")+1);
+                System.out.println("Mail System " + mailSystem); //print only text after @
+                try {
+                    this.authenticator.saveCredentials(fullAccount, String.valueOf(passwordText));
+                    this.authenticator.setforgetOnExit(!rememberMe.isSelected());
+                    this.setVisible(false);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this,"Something went wrong!");
+                    System.exit(1);
+                } finally {
+                    for(int i=0; i<passwordText.length; i++)
+                        passwordText[i] = '*'; //Due to security reasons! Reccomended by .getPassword() doc.
+                }
+            } else {
+                System.out.println("No Mail System");
+                JOptionPane.showMessageDialog(this,"Please enter valid email!");
+            }
+
         }
-        else{
-             this.setVisible(false);
+    }//GEN-LAST:event_loginButton1ActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        System.exit(0);
+    }//GEN-LAST:event_formWindowClosing
+
+    private void passwordFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_passwordFocusGained
+        if("SamplePassword".equals(String.valueOf(password.getPassword()))){
+            password.setText("");
         }
-    	
-        String fullAccount=account.getText();
-        int firstIndex = fullAccount.indexOf("@");
-        //System.out.println("First occurrence of char @"+ 
-        //      " is found at : " + firstIndex); 
-        if(firstIndex>0) {
-        String mailSystem=fullAccount.substring(fullAccount.lastIndexOf("@")+1);
-        System.out.println("Mail System " + mailSystem); //print only text after @
+        passwordVisible.setVisible(true);
+    }//GEN-LAST:event_passwordFocusGained
+
+    private void accountFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_accountFocusGained
+        if("Enter your account".equals(account.getText()))
+            account.setText("");
+    }//GEN-LAST:event_accountFocusGained
+
+    private void accountFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_accountFocusLost
+        if(account.getText().isBlank()){
+            account.setText("Enter your account");
         }
-        else {
-        	System.out.println("No Mail System");
+    }//GEN-LAST:event_accountFocusLost
+
+    private void passwordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_passwordFocusLost
+        if(password.getPassword().length == 0){
+            password.setText("SamplePassword");
         }
+        passwordVisible.setVisible(false);
+    }//GEN-LAST:event_passwordFocusLost
+    
         
-    }
-        boolean passwdClicked=false;
-        boolean passwdVisibleClicked=false;
         
     private ArrayList<String> test() throws FileNotFoundException, IOException, URISyntaxException{
         URL url = getClass().getResource("..//mailzy//storage//test.txt");
@@ -531,7 +490,8 @@ private void passwordVisibleBtn() {
 //        
 //        
 //    }
-
+    private boolean passwdVisibleClicked = false;
+    private final Authenticator authenticator;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel abvLabel;
     private javax.swing.JTextField account;
@@ -546,7 +506,6 @@ private void passwordVisibleBtn() {
     private javax.swing.JLabel loginIcon;
     private javax.swing.JLabel outlookLabel;
     private javax.swing.JPasswordField password;
-    private JPasswordField password_1;
     private javax.swing.JLabel passwordIcon;
     private javax.swing.JLabel passwordVisible;
     private javax.swing.JCheckBox rememberMe;

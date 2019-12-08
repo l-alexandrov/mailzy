@@ -248,6 +248,7 @@ Mailzy/nbbuild/
 Mailzy/dist/
 Mailzy/nbdist/
 Mailzy/.nb-gradle/
+Mailzy/credentials.*
 
 # End of https://www.gitignore.io/api/java,eclipse,intellij,netbeans,jetbrains
 

@@ -6,6 +6,7 @@
 package mailzy;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
 import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
@@ -20,11 +21,14 @@ public class Mailzy {
 
         try{
             Authenticator authenticator = new Authenticator();
+            while(!authenticator.isAuthenticated())
+            {
+                LoginForm loginForm = new LoginForm(this.mainApp, authenticator);
+                loginForm.setVisible(true); 
+            }
             
-            LoginForm loginForm = new LoginForm(this.mainApp);
-            loginForm.setVisible(true); 
-            authenticator.isAuthenticated();
-                this.openMainWindow();
+            this.openMainWindow();
+            authenticator.finishCredentials();
         }
         catch(Exception e){
             System.exit(1);

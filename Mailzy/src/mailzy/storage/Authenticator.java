@@ -26,12 +26,13 @@ public class Authenticator {
           try {
             File file = new File(this.fileName);
             PrintWriter p = new PrintWriter(this.fileName);
-            p.println(this.encrypt(username).toString());
-            p.println(this.encrypt(password).toString());
+            p.println(Base64.getEncoder().encodeToString(this.encrypt(username)));
+            p.println(Base64.getEncoder().encodeToString(this.encrypt(password)));
             p.close();
             this.username = username;
             this.password = password;
-        } catch (FileNotFoundException | BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException fileNotFoundException) {
+        } catch (FileNotFoundException | BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException e) {
+            System.out.println(e.getMessage());
             throw new Exception();
         }
     }
@@ -42,28 +43,32 @@ public class Authenticator {
             scanner = new Scanner(credentials);
             scanner.useDelimiter("\n");
             if(scanner.hasNext())
-                this.username = scanner.next();
+                this.username = this.decrypt(scanner.next());
             if(scanner.hasNext())
-                this.password = scanner.next();
+                this.password = this.decrypt(scanner.next());
         } catch (FileNotFoundException fileNotFoundException) {
             throw new Exception();
         }
     }
+
     private PublicKey getPublicKey(){
-        PublicKey publicKey = null;
+        PublicKey pk = null;
         try{
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(this.base64PublicKey.getBytes()));
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(this.publicKey.getBytes()));
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            publicKey = keyFactory.generatePublic(keySpec);
-            return publicKey;
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            pk = keyFactory.generatePublic(keySpec);
+            return pk;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         }
-        return publicKey;
+        return pk;
     }
+
     private PrivateKey getPrivateKey(){
-        PrivateKey privateKey = null;
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(this.base64PrivateKey.getBytes()));
+        PrivateKey pk = null;
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(this.privateKey.getBytes()));
         KeyFactory keyFactory = null;
         try {
             keyFactory = KeyFactory.getInstance("RSA");
@@ -71,27 +76,26 @@ public class Authenticator {
             e.printStackTrace();
         }
         try {
-            privateKey = keyFactory.generatePrivate(keySpec);
+            pk = keyFactory.generatePrivate(keySpec);
         } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         }
-        return privateKey;
+        return pk;
     }
+
     private byte[] encrypt(String data) throws BadPaddingException, IllegalBlockSizeException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException {
-	Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-	cipher.init(Cipher.ENCRYPT_MODE, this.getPublicKey());
-	return cipher.doFinal(data.getBytes());
-    }
-    
-
-    
-    private String decrypt(String data) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        byte[] byteData = Base64.getDecoder().decode(data.getBytes());
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        cipher.init(Cipher.DECRYPT_MODE, getPrivateKey());
-        return new String(cipher.doFinal(byteData));
+        cipher.init(Cipher.ENCRYPT_MODE, getPublicKey());
+        return cipher.doFinal(data.getBytes());
     }
 
+    private String decrypt(String data) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        Key privateKey = getPrivateKey();
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+        return new String(cipher.doFinal(Base64.getDecoder().decode(data.getBytes())));
+    }
     public String getUserName(){
         return this.username;
     }
@@ -100,6 +104,15 @@ public class Authenticator {
         return this.password;
     }
     public boolean isAuthenticated(){
+        return this.username!= null && this.password != null
+                && !this.username.isBlank() && !this.password.isBlank() && mailProviderAccountCheck();
+    }
+    public void setforgetOnExit(boolean forget){
+        this.forgetOnExit = forget;
+    }
+            
+    private boolean mailProviderAccountCheck(){
+        boolean exists = false;
         try {
             Properties props = System.getProperties();
             props.setProperty("mail.store.protocol", "imaps");
@@ -108,6 +121,9 @@ public class Authenticator {
             // session.setDebug(true);
             Store store = session.getStore("imaps");
             store.connect("imap.gmail.com",this.username, this.password);
+            exists = store.isConnected();
+            //TODO: Implement the MailReader Class
+            
             //Folder folder = store.getFolder("Inbox");
             /* Others GMail folders :
              * [Gmail]/All Mail   This folder contains all of your Gmail messages.
@@ -118,20 +134,25 @@ public class Authenticator {
              * [Gmail]/Trash      Messages deleted from Gmail.
              */
             //folder.open(Folder.READ_WRITE);
-            System.out.println(store.isConnected());
         } catch(Exception e){
             System.out.println(e.getMessage());
         }
-        
-        return this.username!= null && this.password != null
-                && !this.username.isBlank() && !this.password.isBlank();
-        
-            
+        return exists;
     }
     
-    private final String base64PublicKey = "TUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUFnZzkvV0VjVGRJd3ZuRkxFYzFDUTk2T1hJRm5vdXpEYlJJSkI4c2tDNCtyL0FzZzZldHlsekFoMG5uUmdzZ3RYSzIvZVEyN1ArVEtOL2lYUTJwa2ZhK0xycW1TZUx4K093djdQamdDa0ZkTVBJOGpuWklLbzdtLzBSS3pQajFVN1JOWjBaQXhhZ1FraUdXSHMwRDZzakRUQXJnTkRnUHFOSXhaWWQ3RnBwWmczZHg3emRsU3dLWW1xZVhWbklCYmxkK3V3MUdhWG5TUlZ6dm45c0ZDelFZTTdyRlpKRTAzTG8zTUxYQ29sNkp4UFpONVo1R3FZWFgvSnQ0dlZBTzR2M2dkNjQ0cWNOcEkxUU1BUGwxanZhTWltbkpESFcwTzh5T2ZOdXZjWW5mQWtuRU5tYTJmVTVXbHVKT3V5bGxuZ1ZGSUNkNmw4S1cyRU9iYVo4cnU0UFFJREFRQUI=";
-    private final String base64PrivateKey = "TUlJRXZnSUJBREFOQmdrcWhraUc5dzBCQVFFRkFBU0NCS2d3Z2dTa0FnRUFBb0lCQVFDQ0QzOVlSeE4wakMrY1VzUnpVSkQzbzVjZ1dlaTdNTnRFZ2tIeXlRTGo2djhDeURwNjNLWE1DSFNlZEdDeUMxY3JiOTVEYnMvNU1vMytKZERhbVI5cjR1dXFaSjR2SDQ3Qy9zK09BS1FWMHc4anlPZGtncWp1Yi9SRXJNK1BWVHRFMW5Sa0RGcUJDU0laWWV6UVBxeU1OTUN1QTBPQStvMGpGbGgzc1dtbG1EZDNIdk4yVkxBcGlhcDVkV2NnRnVWMzY3RFVacGVkSkZYTytmMndVTE5CZ3p1c1Zra1RUY3VqY3d0Y0tpWG9uRTlrM2xua2FwaGRmOG0zaTlVQTdpL2VCM3JqaXB3MmtqVkF3QStYV085b3lLYWNrTWRiUTd6STU4MjY5eGlkOENTY1EyWnJaOVRsYVc0azY3S1dXZUJVVWdKM3FYd3BiWVE1dHBueXU3ZzlBZ01CQUFFQ2dnRUFNQ2trOHI5L0NNMVFaQWFTRUZGcEhRcEswQVA3RmpZRk85MHdKb01ndXQwdUNRMnorZ0x5c2hiL2VCMklJT1hxSlgrTFFsVXFWaERPVzZvTktLVkM2V1JoOS9yQ1NKamErSUg2d1k2ak5DR3ZuWVNyaXFDSGhhT1hSRWJwcFIzZWtLTUkvbk5Fb0R1TmtQQ2VESTdvdmhKYXR4VW1UZ0I1ZXVDdmFjTWNaK0RwZ0s3SXljODV2Y3hUeHF4TGxFd3pzTkhoYmx2YThocFJIWkFlOURvWDYxMGRaLzNjUzFMRmpPbytveC9XWFZlclJIZDZ6eFVtMkU4OWxLd21nOC9rVnR3aDhYVW9ObjlKUEgyQmlDbUhZeFptV0kwQ3loekRjREtaRmlHcHR6QWVRb0RBSy8yZmZKRGplZXVmd2lXTTk5MkticTdtdjM2MjhNWUlpR3lZZ1FLQmdRRFAwVmVJaFY3UXVUUTR2N3ZkV24yczNnOG1RQ0hheTQ3Zy9MeC9RWldxcmVpc3d3Y1pBK3JmQk5Qdzg3VEhRMGFPUTRMU0tEWWsweDdIcWJtV3pSWjhSRC9sYjh5Y0pZeDNYQUhudW9wbWFVaWJlSXZqZCsyUmlWKzgyZVNrQ3JlZDVqbmpVY3FCellxbHlmUGFLVFlsTEloUE96Y25KWksvTTRudXBvaW5XUUtCZ1FDZ053TkhFWjZlQm1hNlQvQ2ZLS0kxZDhBL0laRlBBV0RETGZYTVhTcU4rN3MxblRKSDQxZ2M3ODdKN1VPRmFUb204bEtpZGNmeVI4WEFPdDRta3N5YVFSODNJT0UzUXdlRVRJNlVmNUNPQTBkbTdVeGdWTzU2Y0Y5VmNHeGdKTHZTd3dzMndyY1J3R1VoOHV4dlYwUzh2bkVGNzlrRlV4L2NNZUQwNXlFZmhRS0JnUURDUHZFcmVVWVRvRmp3aGo2Sit4QW5LWFJOazNwUmNSeityUjFmY1NUODRRcnZtR2VrK1NWckNhODB0QWFRamhCLzN4aURhUFNhM1A4VEwxQjZaUDRVYnhLdVdSNk9BUWJYZGhlTnlxMmNaZUpvOTNjQnlkSXp5NHpDRDRTSDFFQ21oVkFzYXdIMjYvRWhYNi9maGMvSFZXV2ZjVUR2QlU2eUN2RnRNUm5nR1FLQmdRQ0duOU5jTzN6Nk1rek56M0JVZk5OWWRFaVJnOFpUQ2NoaUdWT0tKdHNrTlZ1STRJOG9ndXMrWFc5NGs2c0NCbnE3MFRFSW5FbW4xeEZleHRoMnR6Ry9pR3NQYXN4MElCbkgzSUNPWFdaOVBsb1lMZHZZc21VMWN3bFloTUE4UllHaHh3eThOZitZcGY4VStNZ2Rnc29hZ3pmN2toL2M3bzA5L0plWGtrTnQ5UUtCZ0NML1l1SDh5VDdVR2NPdkdRamg1alpCZlA2cHI3N3VYZktPWWpDSERsbEpWemMvMFZPYTVMUGVVWFNBR1Vkamh1TDBIUzNTMEU5a2l6bDZKaDk3YzdhWGs5SGlxV3oyUlZqNUx0Q3dvSzdvQm9DN1Fwb1VrYlNKVmJhSU9iS3JuZ3VIdXEvN2txYTE3T3BaR2hNNzN0eVA0MlgvRnNzeVJaVGoweFBXVW50UA==";
+    
+    public void finishCredentials()
+    {
+        if(forgetOnExit){            
+            File file = new File(fileName);
+            file.delete();
+        }
+    }
+    
+    private final String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDbf114O+1t7OkgeM/qX/8Vpzxyz4h15Q9Z3Aqvsnk0wlTIqzzaE7JS0Rvv3RXb8JSFj9aF4wqNvX3xv5f4l4HcTpdJt5DBzjtlbs0kxvJnTLTifXPbFxDBj1lgZ8uBGJl1a3j4kppT+i/3YGLUmk1ifo0mPPwwmeeIHliyNgysowIDAQAB";
+    private final String privateKey = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBANt/XXg77W3s6SB4z+pf/xWnPHLPiHXlD1ncCq+yeTTCVMirPNoTslLRG+/dFdvwlIWP1oXjCo29ffG/l/iXgdxOl0m3kMHOO2VuzSTG8mdMtOJ9c9sXEMGPWWBny4EYmXVrePiSmlP6L/dgYtSaTWJ+jSY8/DCZ54geWLI2DKyjAgMBAAECgYAIQligB5E9i6aSBDm+lfIhPHO31jtKRF45gWAdkFejNpS+IENf6VHSb+/fLLB/4COWiv0FeK+S+chdalorjnfiYnKcZTjH/XcWCTw9fyduMnX/3P31BevlLEVSWT4dvj4TpWJ4uQrl5Q19S2t+jFlWuO6X7nc47uuxhhGTw2ifwQJBAPKIAWdUo2UwzSQgfPzB6rnFMlWxLwO+VSLp9FbwJla6tH4sioiIK5M4PO3OkL4IxNQIak2X2p6zHkxH1w9h03ECQQDnr+VLVlx21yfvFW3s+VN5yxzY4dBsFu32qUjrOo0sMTEZgpvEWUaDRLh8DEZeQI9P26OIf5jSPOE6mAlZSY9TAkBg2qeU2FwYQRDraH4Bgn92iKW9SvD3kb72HnARd/4XjKAf8zGvrJGaTU8nuOJcwau48VNigU4xKl7jH51m6y5BAkA2VhBGjOh+jpM1BSeUrhyfsb0AOGVzFCWW9bi+QisdtCO5weHaOL3Kx3Ek1pQiQq3Zor9FofcrR0/jOAjpQdE1AkBmoiE5H1EDxHFh5skBiJtEVan3e+saO02O3OK6hsGuWnjPVMXZuBqm3K5WX+B8PCX0D18e2itoYO8iZoUG/tft";
     private String username;
     private String password;
-    private final String fileName = System.getProperty("user.dir")+"/credentials.txt";
+    private final String fileName = System.getProperty("user.dir")+"/credentials.mlzy";
+    private boolean forgetOnExit = false;
 }
