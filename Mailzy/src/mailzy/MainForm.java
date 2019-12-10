@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.GridLayout;
 import java.awt.Font;
+import mailzy.storage.Authenticator;
 
 /**
  *
@@ -32,40 +33,38 @@ public class MainForm extends javax.swing.JFrame {
 
 	/**
 	 * Creates new form MainForm
+         * @param authenticator
 	 */
-	public MainForm() {
+	public MainForm(Authenticator authenticator) {
 		initComponents();
 
 		this.setVisible(true);
 		this.connection = null;
-		this.mailListDetails = new ArrayList<String[]>();
+		this.mailListDetails = new ArrayList<Mail>();
 		this.mailList.setModel(new DefaultListModel<String>());
+                this.authenticator = authenticator;
 		try {
-			this.connection = new SQLiteConnector();
+                    this.connection = new SQLiteConnector();
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			JOptionPane.showMessageDialog(this, "A Database connection error occured!");
-			System.exit(1);
+                    System.out.println(e.getMessage());
+                    JOptionPane.showMessageDialog(this, "A Database connection error occured!");
+                    System.exit(1);
 		}
-
-		String senderMail = "l.alexandrov@ue-varna.bg";
-		// TODO: Fetch credentials from file
-
+                
+		// TODO: Check if server active, Fetch data from SMTP, and insert in db (cache)
 		try {
-			this.connection.query("SELECT * FROM mails WHERE sender = '" + senderMail + "'");
-			ResultSet rs = this.connection.fetch();
-			while (rs.next()) {
-				String[] row = new String[] { rs.getString("sender"), rs.getString("reciever"),
-						rs.getString("recieved_at"), rs.getString("subject"), rs.getString("mail") };
-				this.mailListDetails.add(row);
-				((DefaultListModel<String>) this.mailList.getModel()).addElement(row[3]);
-			}
+                    this.connection.query("SELECT * FROM mails WHERE sender = '" + this.authenticator.getUserName() + "'");
+                    ResultSet rs = this.connection.fetch();
+                    while (rs.next()) {
+                            Mail mail = new Mail( rs.getString("sender"), rs.getString("subject"), rs.getDate("recieved_at") ,rs.getString("mail") );
+                            this.mailListDetails.add(mail);
+                            ((DefaultListModel<String>) this.mailList.getModel()).addElement(mail.subject);
+                    }
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			JOptionPane.showMessageDialog(this, "A Database query error occured!");
-			System.exit(1);
+                    System.out.println(e.getMessage());
+                    JOptionPane.showMessageDialog(this, "A Database query error occured!");
+                    System.exit(1);
 		}
-		// TODO: Fetch data from SMTP, show in application and insert in db (cache)
 
 	}
 
@@ -598,9 +597,10 @@ public class MainForm extends javax.swing.JFrame {
 		//frame.getContentPane().add(detailsPanel,BorderLayout.CENTER); 
 		//detailsPanel.add(c4Panel,BorderLayout.CENTER); 
 	}
-	private ArrayList<String[]> mailListDetails;
+	private ArrayList<Mail> mailListDetails;
 	private SQLiteConnector connection;
-	// Variables declaration - do not modify//GEN-BEGIN:variables
+        private final Authenticator authenticator;
+	// Variables declaration - do not modify                     
 	private javax.swing.JPanel detailsPanel;
 	private javax.swing.JTextField fromInput;
 	private javax.swing.JLabel fromLabel;

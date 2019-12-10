@@ -11,15 +11,21 @@ import java.security.spec.*;
 import java.util.*;
 import javax.crypto.*;
 import javax.mail.*;
+import mailzy.exchange.MailProvider;
+import mailzy.exchange.MailReader;
+import mailzy.exchange.MailSender;
+import mailzy.exchange.MailSenderFactory;
 /**
  *
  * @author lalexandrov
  */
 public class Authenticator {
-    public Authenticator() throws Exception {
+    public Authenticator(HashMap<String, MailProvider> mailProviders) throws Exception {
         this.username = null;
         this.password = null;
+        this.mailProviders = mailProviders;
         new File(this.fileName).createNewFile();
+        this.mailReader = new MailReader();
         this.readCredentials();
     }
     public void saveCredentials(String username, String password) throws Exception{    
@@ -112,37 +118,21 @@ public class Authenticator {
     }
             
     private boolean mailProviderAccountCheck(){
-        boolean exists = false;
-        try {
-            Properties props = System.getProperties();
-            props.setProperty("mail.store.protocol", "imaps");
-
-            Session session = Session.getDefaultInstance(props, null);
-            // session.setDebug(true);
-            Store store = session.getStore("imaps");
-            store.connect("imap.gmail.com",this.username, this.password);
-            exists = store.isConnected();
-            //TODO: Implement the MailReader Class
-            
-            //Folder folder = store.getFolder("Inbox");
-            /* Others GMail folders :
-             * [Gmail]/All Mail   This folder contains all of your Gmail messages.
-             * [Gmail]/Drafts     Your drafts.
-             * [Gmail]/Sent Mail  Messages you sent to other people.
-             * [Gmail]/Spam       Messages marked as spam.
-             * [Gmail]/Starred    Starred messages.
-             * [Gmail]/Trash      Messages deleted from Gmail.
-             */
-            //folder.open(Folder.READ_WRITE);
-        } catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-        return exists;
+        String provider = this.username.split("@")[1];
+        MailProvider  mailProvider =  this.mailProviders.get(provider);
+        if(mailProvider == null)
+            return false;
+        if(!this.mailReader.connect(new String[]{mailProvider.imapHost, this.username, this.password}))
+            return false;
+        
+        this.mailSender = MailSenderFactory.getMailer(mailProvider.smtpEncryption, mailProvider.smtpHost, (short) mailProvider.smtpPort, this.username, this.password);
+        return true;
     }
     
     
     public void finishCredentials()
     {
+        this.mailReader.finish();
         if(forgetOnExit){            
             File file = new File(fileName);
             file.delete();
@@ -151,8 +141,11 @@ public class Authenticator {
     
     private final String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDbf114O+1t7OkgeM/qX/8Vpzxyz4h15Q9Z3Aqvsnk0wlTIqzzaE7JS0Rvv3RXb8JSFj9aF4wqNvX3xv5f4l4HcTpdJt5DBzjtlbs0kxvJnTLTifXPbFxDBj1lgZ8uBGJl1a3j4kppT+i/3YGLUmk1ifo0mPPwwmeeIHliyNgysowIDAQAB";
     private final String privateKey = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBANt/XXg77W3s6SB4z+pf/xWnPHLPiHXlD1ncCq+yeTTCVMirPNoTslLRG+/dFdvwlIWP1oXjCo29ffG/l/iXgdxOl0m3kMHOO2VuzSTG8mdMtOJ9c9sXEMGPWWBny4EYmXVrePiSmlP6L/dgYtSaTWJ+jSY8/DCZ54geWLI2DKyjAgMBAAECgYAIQligB5E9i6aSBDm+lfIhPHO31jtKRF45gWAdkFejNpS+IENf6VHSb+/fLLB/4COWiv0FeK+S+chdalorjnfiYnKcZTjH/XcWCTw9fyduMnX/3P31BevlLEVSWT4dvj4TpWJ4uQrl5Q19S2t+jFlWuO6X7nc47uuxhhGTw2ifwQJBAPKIAWdUo2UwzSQgfPzB6rnFMlWxLwO+VSLp9FbwJla6tH4sioiIK5M4PO3OkL4IxNQIak2X2p6zHkxH1w9h03ECQQDnr+VLVlx21yfvFW3s+VN5yxzY4dBsFu32qUjrOo0sMTEZgpvEWUaDRLh8DEZeQI9P26OIf5jSPOE6mAlZSY9TAkBg2qeU2FwYQRDraH4Bgn92iKW9SvD3kb72HnARd/4XjKAf8zGvrJGaTU8nuOJcwau48VNigU4xKl7jH51m6y5BAkA2VhBGjOh+jpM1BSeUrhyfsb0AOGVzFCWW9bi+QisdtCO5weHaOL3Kx3Ek1pQiQq3Zor9FofcrR0/jOAjpQdE1AkBmoiE5H1EDxHFh5skBiJtEVan3e+saO02O3OK6hsGuWnjPVMXZuBqm3K5WX+B8PCX0D18e2itoYO8iZoUG/tft";
+    private final HashMap<String, MailProvider> mailProviders;
     private String username;
     private String password;
+    private final MailReader mailReader;
+    private MailSender mailSender;
     private final String fileName = System.getProperty("user.dir")+"/credentials.mlzy";
     private boolean forgetOnExit = false;
 }

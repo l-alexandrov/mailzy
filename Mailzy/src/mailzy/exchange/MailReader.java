@@ -5,8 +5,11 @@
  */
 package mailzy.exchange;
 
+import java.io.IOException;
 import java.util.*;
 import javax.mail.*;
+import mailzy.Mail;
+// import javax.activation.*;
 /**
  *
  * @author lalexandrov
@@ -14,7 +17,7 @@ import javax.mail.*;
 public class MailReader
 {
 
-  public static void MailReader(String[] args)
+  public boolean connect(String[] args)
   {
     Properties props = new Properties();
 
@@ -22,54 +25,63 @@ public class MailReader
     String username  = args[1];
     String password  = args[2];
     //String provider  = "pop3";
-    String provider  = "imap";
-
+    String provider  = "imaps";
     try
     {
       //Connect to the server
       Session session = Session.getDefaultInstance(props, null);
-      Store store     = session.getStore(provider);
-      store.connect(host, username, password);
-
+      this.store     = session.getStore(provider);
+      this.store.connect(host, username, password);
+    } catch (MessagingException me) {
+      System.err.println("messaging exception");
+      me.printStackTrace();
+    }
+    return  this.store!=null && this.store.isConnected();
+  }
+  
+  public ArrayList<Mail> getMessages(int begin, int end) {
+    
+    ArrayList<Mail> mailList = new ArrayList<Mail>();
+    try{
       //open the inbox folder
-      Folder inbox = store.getFolder("INBOX");
+      Folder inbox = this.store.getFolder("INBOX");
       inbox.open(Folder.READ_ONLY);
 
       // get a list of javamail messages as an array of messages
       Message[] messages = inbox.getMessages();
 
-      TreeSet treeSet = new TreeSet();
-
-      for(int i = 0; i < messages.length; i++)
+      for(int i = begin; i < end; i++)
       {
+        if(i>=messages.length)
+            break;
         String from = getFrom(messages[i]);
-        if ( from!=null)
-        {
-          from = removeQuotes(from);
-          treeSet.add(from);
+        if ( from==null){
+            continue;
         }
+        from = removeQuotes(from);
+        String subject = messages[i].getSubject();
+       Date modifiedAt = messages[i].getReceivedDate();
+       String body = messages[i].getContent().toString();
+       mailList.add(new Mail(from, subject, modifiedAt, body));
       }
-
-      Iterator it = treeSet.iterator();
-      while ( it.hasNext() )
-      {
-        System.out.println("from: " + it.next());
-      }
-
+      
       //close the inbox folder but do not
       //remove the messages from the server
       inbox.close(false);
-      store.close();
+
+
     }
     catch (NoSuchProviderException nspe)
     {
       System.err.println("invalid provider name");
-    }
-    catch (MessagingException me)
-    {
+    } catch (MessagingException me) {
       System.err.println("messaging exception");
       me.printStackTrace();
+    } catch (IOException ex) {
+        ex.printStackTrace();
     }
+    
+      return mailList;
   }
 
   private static String getFrom(Message javaMailMessage) 
@@ -109,5 +121,13 @@ public class MailReader
     }
     return new String(newStringBuffer);
   }
+  public void finish(){
+      try {
+          this.store.close();
+      } catch (MessagingException ex) {
+          ex.printStackTrace();
+      }
+  }
 
+    private Store store;
 }
