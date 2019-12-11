@@ -8,6 +8,7 @@ package mailzy.exchange;
 import java.io.IOException;
 import java.util.*;
 import javax.mail.*;
+import javax.mail.internet.MimeMultipart;
 import mailzy.Mail;
 // import javax.activation.*;
 /**
@@ -39,65 +40,91 @@ public class MailReader
     return  this.store!=null && this.store.isConnected();
   }
   
-  public ArrayList<Mail> getMessages(int begin, int end) {
-    
-    ArrayList<Mail> mailList = new ArrayList<Mail>();
-    try{
-      //open the inbox folder
-      Folder inbox = this.store.getFolder("INBOX");
-      inbox.open(Folder.READ_ONLY);
+    public ArrayList<Mail> getMessages(int begin, int end) {
 
-      // get a list of javamail messages as an array of messages
-      Message[] messages = inbox.getMessages();
+      ArrayList<Mail> mailList = new ArrayList<Mail>();
+      try{
+          //open the inbox folder
+          Folder inbox = this.store.getFolder("INBOX");
+          inbox.open(Folder.READ_ONLY);
 
-      for(int i = begin; i < end; i++)
-      {
-        if(i>=messages.length)
-            break;
-        String from = getFrom(messages[i]);
-        if ( from==null){
-            continue;
-        }
-        from = removeQuotes(from);
-        String subject = messages[i].getSubject();
-       Date modifiedAt = messages[i].getReceivedDate();
-       String body = messages[i].getContent().toString();
-       mailList.add(new Mail(from, subject, modifiedAt, body));
+          // get a list of javamail messages as an array of messages
+          Message[] messages = inbox.getMessages();
+
+          for(int i = begin; i < end; i++)
+          {
+              if(i>=messages.length)
+                  break;
+              String from = getFrom(messages[i]);
+              if ( from==null){
+                  continue;
+              }
+              from = removeQuotes(from);
+              String subject = messages[i].getSubject();
+              Date modifiedAt = messages[i].getReceivedDate();
+              String body = getTextFromMessage(messages[i]);
+              mailList.add(new Mail(from, subject, modifiedAt, body));
+          }
+
+          //close the inbox folder but do not
+          //remove the messages from the server
+          inbox.close(false);
+
+
       }
-      
-      //close the inbox folder but do not
-      //remove the messages from the server
-      inbox.close(false);
+      catch (NoSuchProviderException nspe){
+          System.err.println("invalid provider name");
+      } catch (MessagingException me) {
+          System.err.println("messaging exception");
+          me.printStackTrace();
+      } catch (IOException ex) {
+          ex.printStackTrace();
+      }
 
-
+        return mailList;
     }
-    catch (NoSuchProviderException nspe)
+    private String getTextFromMessage(Message message) throws MessagingException, IOException {
+        String result = "";
+        if (message.isMimeType("text/plain")) {
+            result = message.getContent().toString();
+        } else if (message.isMimeType("multipart/*")) {
+            MimeMultipart mimeMultipart = (MimeMultipart) message.getContent();
+            result = getTextFromMimeMultipart(mimeMultipart);
+        }
+        return result;
+    }
+
+    private String getTextFromMimeMultipart(MimeMultipart mimeMultipart)  throws MessagingException, IOException {
+        String result = "";
+        int count = mimeMultipart.getCount();
+        for (int i = 0; i < count; i++) {
+            BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+            if (bodyPart.isMimeType("text/plain")) {
+                result = result + "\n" + bodyPart.getContent();
+                break; // without break same text appears twice in my tests
+            } else if (bodyPart.isMimeType("text/html")) {
+                String html = (String) bodyPart.getContent();
+                result = result + "\n" + org.jsoup.Jsoup.parse(html).text();
+            } else if (bodyPart.getContent() instanceof MimeMultipart){
+                result = result + getTextFromMimeMultipart((MimeMultipart)bodyPart.getContent());
+            }
+        }
+        return result;
+    }
+    private static String getFrom(Message javaMailMessage) 
+    throws MessagingException
     {
-      System.err.println("invalid provider name");
-    } catch (MessagingException me) {
-      System.err.println("messaging exception");
-      me.printStackTrace();
-    } catch (IOException ex) {
-        ex.printStackTrace();
-    }
-    
-      return mailList;
-  }
+      String from = "";
+      Address a[] = javaMailMessage.getFrom();
+      if ( a==null ) return null;
+      for ( int i=0; i<a.length; i++ )
+      {
+        Address address = a[i];
+        from = from + address.toString();
+      }
 
-  private static String getFrom(Message javaMailMessage) 
-  throws MessagingException
-  {
-    String from = "";
-    Address a[] = javaMailMessage.getFrom();
-    if ( a==null ) return null;
-    for ( int i=0; i<a.length; i++ )
-    {
-      Address address = a[i];
-      from = from + address.toString();
+      return from;
     }
-
-    return from;
-  }
 
   private static String removeQuotes(String stringToModify)
   {

@@ -9,20 +9,16 @@ import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 import mailzy.storage.SQLiteConnector;
-import net.atlanticbb.tantlinger.shef.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.event.MenuListener;
-
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.GridLayout;
 import java.awt.Font;
+import java.time.format.DateTimeFormatter;
 import mailzy.storage.Authenticator;
 
 /**
@@ -43,22 +39,23 @@ public class MainForm extends javax.swing.JFrame {
 		this.mailListDetails = new ArrayList<Mail>();
 		this.mailList.setModel(new DefaultListModel<String>());
                 this.authenticator = authenticator;
-		try {
+                try {
                     this.connection = new SQLiteConnector();
 		} catch (SQLException e) {
                     System.out.println(e.getMessage());
                     JOptionPane.showMessageDialog(this, "A Database connection error occured!");
                     System.exit(1);
 		}
-                
-		// TODO: Check if server active, Fetch data from SMTP, and insert in db (cache)
+                refreshDB();
+                       
 		try {
-                    this.connection.query("SELECT * FROM mails WHERE sender = '" + this.authenticator.getUserName() + "'");
+                    this.connection.query("SELECT * FROM mails WHERE reciever = '" + this.authenticator.getUserName() + "'");
                     ResultSet rs = this.connection.fetch();
                     while (rs.next()) {
-                            Mail mail = new Mail( rs.getString("sender"), rs.getString("subject"), rs.getDate("recieved_at") ,rs.getString("mail") );
-                            this.mailListDetails.add(mail);
-                            ((DefaultListModel<String>) this.mailList.getModel()).addElement(mail.subject);
+                        this.mailListDetails.add(new Mail( rs.getString("sender"), rs.getString("subject"), rs.getDate("recieved_at") ,rs.getString("mail") ));
+                    }
+                    for(int i=0;i< this.mailListDetails.size();i++){
+                        ((DefaultListModel<String>) this.mailList.getModel()).addElement(this.mailListDetails.get(i).subject);
                     }
 		} catch (SQLException e) {
                     System.out.println(e.getMessage());
@@ -504,7 +501,33 @@ public class MainForm extends javax.swing.JFrame {
 		showNewMailForm();
 		
 	}// GEN-LAST:event_newMailItemActionPerformed
-	boolean isSideBarOpen = false;
+        
+        private void refreshDB() {
+            ArrayList<Mail> mailArrayList = this.authenticator.getMailReader().getMessages(0, 20);
+            if(mailArrayList.size() > 0){
+                boolean success = true;
+                this.connection.beginTransaction();
+                if(!this.connection.deleteWhere("mails"," reciever = '" + this.authenticator.getUserName() + "'")){
+                    this.connection.rollBack();
+                    JOptionPane.showMessageDialog(this, "A Database query error occured!");
+                    return;
+                }
+
+                String[] columns = {"sender", "reciever", "recieved_at", "subject", "mail", "created_at"};
+                ArrayList<String[]> insertData = new ArrayList<String[]>();
+                DateTimeFormatter dbDateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                for(Mail mail: mailArrayList){
+                    insertData.add(new String[]{mail.from, this.authenticator.getUserName(), String.valueOf(mail.lastModified.getTime()), mail.subject, mail.body, String.valueOf(System.currentTimeMillis())});
+                }
+                if(!this.connection.multipleInsert("mails", columns, insertData)){
+                    this.connection.rollBack();
+                    JOptionPane.showMessageDialog(this, "A Database query error occured!");
+                    return;
+                }
+                this.connection.commit();
+            }
+        }
+	
 	private void showMenu(JPanel panelName, JLabel labelname) {
 		
 		if (isSideBarOpen == false) {
@@ -562,41 +585,18 @@ public class MainForm extends javax.swing.JFrame {
 		
 	}
 	
-	HTMLEditorPane editor = new HTMLEditorPane();
-	JFrame frame = new JFrame();
-	JMenuBar menuBar = new JMenuBar();
-	JButton button = new JButton("Send");
+
 	
 	private void showNewMailForm() {
-		//TODO add labels and textfields
-		menuBar.add(editor.getEditMenu());
-		menuBar.add(editor.getFormatMenu());
-		menuBar.add(editor.getInsertMenu());
-		frame.setJMenuBar(menuBar);
-		
-		frame.setTitle("New Mail");
-		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
-		frame.setSize(800, 770);
-		frame.setResizable(false);
-		button.setBounds(680,580,100,20);
-		frame.getContentPane().add(button);
-		editor.setBounds(0, 80, 780, 600);
-		frame.getContentPane().add(editor);
-		frame.setVisible(true);
-		button.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				frame.getContentPane().setBackground(Color.red); //Test
-				
-			}
-		});
-		
-		
+            Mail mail = new Mail();
+            new NewMailDialog(this, true, mail);
+            //TODO: Send it via this.authenticator.mailWriter and save it in the db
+            
+            
 		//frame.getContentPane().add(detailsPanel,BorderLayout.CENTER); 
 		//detailsPanel.add(c4Panel,BorderLayout.CENTER); 
 	}
+        boolean isSideBarOpen = false;
 	private ArrayList<Mail> mailListDetails;
 	private SQLiteConnector connection;
         private final Authenticator authenticator;

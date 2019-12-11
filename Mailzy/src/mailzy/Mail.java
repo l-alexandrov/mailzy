@@ -19,6 +19,7 @@ public class Mail {
         this.lastModified = lastModified;
         this.body = body;
     }
+    public Mail(){};
     
     public String from;
     public String subject;

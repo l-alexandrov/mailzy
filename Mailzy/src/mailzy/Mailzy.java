@@ -34,7 +34,7 @@ public class Mailzy {
                 loginForm.setVisible(true); 
             }
             this.openMainWindow(authenticator);
-            authenticator.finishCredentials();
+            //authenticator.finishCredentials();
         } catch(Exception e){
             System.exit(1);
         }

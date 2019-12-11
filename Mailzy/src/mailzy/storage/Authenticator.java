@@ -139,6 +139,13 @@ public class Authenticator {
         }
     }
     
+    public MailReader getMailReader(){
+        return this.mailReader;
+    }
+    
+    public MailSender getMailSender(){
+        return this.mailSender;
+    }
     private final String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDbf114O+1t7OkgeM/qX/8Vpzxyz4h15Q9Z3Aqvsnk0wlTIqzzaE7JS0Rvv3RXb8JSFj9aF4wqNvX3xv5f4l4HcTpdJt5DBzjtlbs0kxvJnTLTifXPbFxDBj1lgZ8uBGJl1a3j4kppT+i/3YGLUmk1ifo0mPPwwmeeIHliyNgysowIDAQAB";
     private final String privateKey = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBANt/XXg77W3s6SB4z+pf/xWnPHLPiHXlD1ncCq+yeTTCVMirPNoTslLRG+/dFdvwlIWP1oXjCo29ffG/l/iXgdxOl0m3kMHOO2VuzSTG8mdMtOJ9c9sXEMGPWWBny4EYmXVrePiSmlP6L/dgYtSaTWJ+jSY8/DCZ54geWLI2DKyjAgMBAAECgYAIQligB5E9i6aSBDm+lfIhPHO31jtKRF45gWAdkFejNpS+IENf6VHSb+/fLLB/4COWiv0FeK+S+chdalorjnfiYnKcZTjH/XcWCTw9fyduMnX/3P31BevlLEVSWT4dvj4TpWJ4uQrl5Q19S2t+jFlWuO6X7nc47uuxhhGTw2ifwQJBAPKIAWdUo2UwzSQgfPzB6rnFMlWxLwO+VSLp9FbwJla6tH4sioiIK5M4PO3OkL4IxNQIak2X2p6zHkxH1w9h03ECQQDnr+VLVlx21yfvFW3s+VN5yxzY4dBsFu32qUjrOo0sMTEZgpvEWUaDRLh8DEZeQI9P26OIf5jSPOE6mAlZSY9TAkBg2qeU2FwYQRDraH4Bgn92iKW9SvD3kb72HnARd/4XjKAf8zGvrJGaTU8nuOJcwau48VNigU4xKl7jH51m6y5BAkA2VhBGjOh+jpM1BSeUrhyfsb0AOGVzFCWW9bi+QisdtCO5weHaOL3Kx3Ek1pQiQq3Zor9FofcrR0/jOAjpQdE1AkBmoiE5H1EDxHFh5skBiJtEVan3e+saO02O3OK6hsGuWnjPVMXZuBqm3K5WX+B8PCX0D18e2itoYO8iZoUG/tft";
     private final HashMap<String, MailProvider> mailProviders;
