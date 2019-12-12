@@ -30,7 +30,23 @@ public class NewMailDialog extends javax.swing.JDialog {
         menuBar.add(editor.getInsertMenu());
 
         this.getContentPane().setLayout(null);
-        button.setBounds(680,580,100,20);
+        
+        labelFrom.setBounds(10,5,50,20);
+		labelTo.setBounds(10,25,50,20);
+		labelSubject.setBounds(10,45,50,20);
+		textFrom.setBounds(70,5,300,20);
+		textTo.setBounds(70,25,300,20);
+		textSubject.setBounds(70,45,300,20);
+		
+		this.getContentPane().add(labelFrom);
+		this.getContentPane().add(labelTo);
+		this.getContentPane().add(labelSubject);
+		this.getContentPane().add(textFrom);
+		this.getContentPane().add(textTo);
+		this.getContentPane().add(textSubject);
+		
+		
+        button.setBounds(680,665,100,40);
         this.getContentPane().add(button);
         editor.setBounds(0, 80, 780, 600);
         this.getContentPane().add(editor);
@@ -45,7 +61,14 @@ public class NewMailDialog extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
+    	labelFrom = new javax.swing.JLabel();
+    	labelTo = new javax.swing.JLabel();
+    	labelSubject = new javax.swing.JLabel();
+    	
+    	textFrom = new javax.swing.JTextField();
+    	textTo = new javax.swing.JTextField();
+    	textSubject = new javax.swing.JTextField();
+    	
         button = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
 
@@ -95,5 +118,12 @@ public class NewMailDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JLabel labelFrom;
+    private javax.swing.JLabel labelTo;
+    private javax.swing.JLabel labelSubject;
+    private javax.swing.JTextField textFrom;
+    private javax.swing.JTextField textTo;
+    private javax.swing.JTextField textSubject;
+    
     // End of variables declaration//GEN-END:variables
 }
