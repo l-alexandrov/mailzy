@@ -1,3 +1,3 @@
-outlook.com	smtp.office365.com:567	STARTTLS;outlook.office365.com:993
+outlook.com,live.com	smtp.office365.com:567	STARTTLS;outlook.office365.com:993
 gmail.com,ue-varna.bg	smtp.gmail.com:465	SSL;imap.gmail.com:993
 yahoo.com	smtp.mail.yahoo.com:465	SSL;imap.mail.yahoo.com:993

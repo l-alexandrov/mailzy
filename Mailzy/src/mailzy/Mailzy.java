@@ -36,6 +36,7 @@ public class Mailzy {
             this.openMainWindow(authenticator);
             //authenticator.finishCredentials();
         } catch(Exception e){
+        	e.printStackTrace();
             System.exit(1);
         }
     }
@@ -50,7 +51,7 @@ public class Mailzy {
             File credentials = new File(System.getProperty("user.dir")+"/providers.txt");
             Scanner scanner = null;
             scanner = new Scanner(credentials);
-            scanner.useDelimiter("\n");
+            scanner.useDelimiter(System.lineSeparator());
             while(scanner.hasNext()){
                 String[] params = scanner.next().split(";");
                 String[] smtpParams = params[0].split("\t");
@@ -58,6 +59,7 @@ public class Mailzy {
                 for(String domain : smtpParams[0].split(","))
                     providers.put(domain, new MailProvider(address[0], Integer.parseInt(address[1]), smtpParams[2], params[1].split(":")[0]));
             }
+            scanner.close();
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }

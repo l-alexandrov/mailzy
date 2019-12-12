@@ -47,11 +47,12 @@ public class Authenticator {
             File credentials = new File(this.fileName);
             Scanner scanner = null;
             scanner = new Scanner(credentials);
-            scanner.useDelimiter("\n");
+            scanner.useDelimiter(System.lineSeparator());
             if(scanner.hasNext())
                 this.username = this.decrypt(scanner.next());
             if(scanner.hasNext())
                 this.password = this.decrypt(scanner.next());
+            scanner.close();
         } catch (FileNotFoundException fileNotFoundException) {
             throw new Exception();
         }
