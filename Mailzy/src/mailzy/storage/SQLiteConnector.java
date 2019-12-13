@@ -30,6 +30,7 @@ public class SQLiteConnector {
         try {
             Statement stmt  = this.conn.createStatement();
             stmt.execute(sql);
+            System.out.println("test");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -60,7 +61,7 @@ public class SQLiteConnector {
         boolean success = true;
         try {
             Statement stmt  = this.conn.createStatement();
-            stmt.executeUpdate(sql);
+            stmt.executeUpdate(sql); 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             success = false;
@@ -109,6 +110,7 @@ public class SQLiteConnector {
          try {
             if (this.conn != null) {
                 this.conn.close();
+                
             }
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());

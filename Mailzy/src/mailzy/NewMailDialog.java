@@ -32,6 +32,9 @@ public class NewMailDialog extends javax.swing.JDialog {
         this.getContentPane().setLayout(null);
         
         labelFrom.setBounds(10,5,50,20);
+        labelFrom.setText("From");
+        labelTo.setText("To");
+        labelSubject.setText("Subject");
 		labelTo.setBounds(10,25,50,20);
 		labelSubject.setBounds(10,45,50,20);
 		textFrom.setBounds(70,5,300,20);
@@ -81,6 +84,7 @@ public class NewMailDialog extends javax.swing.JDialog {
         button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonActionPerformed(evt);
+                
             }
         });
         setJMenuBar(menuBar);
