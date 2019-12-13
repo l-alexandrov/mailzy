@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import mailzy.storage.SQLiteConnector;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
@@ -20,6 +22,10 @@ import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.time.format.DateTimeFormatter;
 import mailzy.storage.Authenticator;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  *
@@ -32,37 +38,79 @@ public class MainForm extends javax.swing.JFrame {
          * @param authenticator
 	 */
 	public MainForm(Authenticator authenticator) {
-		initComponents();
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				finishApp();
+			}
 
+
+		});
+		initComponents();
+		this.setTitle("Mailzy");
+		this.detailsElementsVisible(false);
+		JLabel loading = new JLabel("");
+		loading.setIcon(new ImageIcon(MainForm.class.getResource("/swing/images/loading.gif")));
+
+		loading.setSize(256, 256);
+		loading.setHorizontalAlignment(SwingConstants.CENTER);
+		this.detailsPanel.add(loading, GroupLayout.Alignment.CENTER);
 		this.setVisible(true);
 		this.connection = null;
 		this.mailListDetails = new ArrayList<Mail>();
 		this.mailList.setModel(new DefaultListModel<String>());
-                this.authenticator = authenticator;
-                try {
-                    this.connection = new SQLiteConnector();
-		} catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                    JOptionPane.showMessageDialog(this, "A Database connection error occured!");
-                    System.exit(1);
-		}
-                refreshDB();
-                       
-		try {
-                    this.connection.query("SELECT * FROM mails WHERE reciever = '" + this.authenticator.getUserName() + "'");
-                    ResultSet rs = this.connection.fetch();
-                    while (rs.next()) {
-                        this.mailListDetails.add(new Mail( rs.getString("sender"), rs.getString("subject"), rs.getDate("recieved_at") ,rs.getString("mail") ));
-                    }
-                    for(int i=0;i< this.mailListDetails.size();i++){
-                        ((DefaultListModel<String>) this.mailList.getModel()).addElement(this.mailListDetails.get(i).subject);
-                    }
-		} catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                    JOptionPane.showMessageDialog(this, "A Database query error occured!");
-                    System.exit(1);
-		}
+		this.authenticator = authenticator;
+		establishConnection();
+        refreshDB();
+        populateList();               
+		
+		this.detailsElementsVisible(true);
+	}
+	private void finishApp() {
+		this.authenticator.finishCredentials();
+		
+	}
 
+	private void populateList() {
+		try {
+            this.connection.query("SELECT * FROM mails WHERE reciever = '" + this.authenticator.getUserName() + "'");
+            ResultSet rs = this.connection.fetch();
+            while (rs.next()) {
+                this.mailListDetails.add(new Mail( rs.getString("sender"), rs.getString("subject"), rs.getDate("recieved_at") ,rs.getString("mail") ));
+            }
+            for(int i=0;i< this.mailListDetails.size();i++){
+                ((DefaultListModel<String>) this.mailList.getModel()).addElement(this.mailListDetails.get(i).subject);
+            }
+		} catch (SQLException e) {
+            System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(this, "A Database query error occured!");
+            System.exit(1);
+		}
+		System.out.println(this.mailListDetails.get(0));
+		
+	}
+
+	private void establishConnection() {
+		try {
+            this.connection = new SQLiteConnector();
+		} catch (SQLException e) {
+            System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(this, "A Database connection error occured!");
+            System.exit(1);
+		}
+		
+	}
+
+	private void detailsElementsVisible(boolean b) {
+		this.fromLabel.setVisible(b);
+		this.fromInput.setVisible(b);
+		this.mailTextPane.setVisible(b);
+		this.fromInput.setVisible(b);
+		this.fromLabel.setVisible(b);
+		this.toInput.setVisible(b);
+		this.toLabel.setVisible(b);
+		this.subjectInput.setVisible(b);
+		this.subjectLabel.setVisible(b);
 	}
 
 	/**
@@ -80,9 +128,13 @@ public class MainForm extends javax.swing.JFrame {
 		subjectLabel = new javax.swing.JLabel();
 		mailTextPane = new javax.swing.JScrollPane();
 		mailText = new javax.swing.JEditorPane();
+		mailText.setEditable(false);
 		toInput = new javax.swing.JTextField();
+		toInput.setEditable(false);
 		fromInput = new javax.swing.JTextField();
+		fromInput.setEditable(false);
 		subjectInput = new javax.swing.JTextField();
+		subjectInput.setEditable(false);
 		speechPanel = new javax.swing.JPanel();
 		newMailBtn = new javax.swing.JButton();
 		newMailBtn.addActionListener(new ActionListener() {
@@ -110,39 +162,41 @@ public class MainForm extends javax.swing.JFrame {
 		mailText.getAccessibleContext().setAccessibleDescription("");
 
 		javax.swing.GroupLayout detailsPanelLayout = new javax.swing.GroupLayout(detailsPanel);
-		detailsPanelLayout.setHorizontalGroup(detailsPanelLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(detailsPanelLayout.createSequentialGroup().addGroup(detailsPanelLayout
-						.createParallelGroup(Alignment.LEADING)
+		detailsPanelLayout.setHorizontalGroup(
+			detailsPanelLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(detailsPanelLayout.createSequentialGroup()
+					.addGroup(detailsPanelLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(detailsPanelLayout.createSequentialGroup()
-								.addGroup(detailsPanelLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(subjectLabel).addComponent(toLabel, Alignment.TRAILING)
-										.addComponent(fromLabel, Alignment.TRAILING))
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addGroup(detailsPanelLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(toInput, GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
-										.addComponent(fromInput, GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
-										.addComponent(subjectInput, GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)))
-						.addComponent(mailTextPane, GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE))
-						.addContainerGap()));
-		detailsPanelLayout
-				.setVerticalGroup(
-						detailsPanelLayout.createParallelGroup(Alignment.TRAILING)
-								.addGroup(detailsPanelLayout.createSequentialGroup().addGap(1)
-										.addGroup(detailsPanelLayout.createParallelGroup(Alignment.BASELINE)
-												.addComponent(fromInput, GroupLayout.PREFERRED_SIZE, 31,
-														Short.MAX_VALUE)
-												.addComponent(fromLabel))
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addGroup(detailsPanelLayout.createParallelGroup(Alignment.BASELINE)
-												.addComponent(toLabel).addComponent(toInput, GroupLayout.PREFERRED_SIZE,
-														GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addGroup(detailsPanelLayout.createParallelGroup(Alignment.BASELINE)
-												.addComponent(subjectInput, GroupLayout.PREFERRED_SIZE,
-														GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-												.addComponent(subjectLabel))
-										.addGap(18)
-										.addComponent(mailTextPane, GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)));
+							.addGroup(detailsPanelLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(subjectLabel)
+								.addComponent(toLabel, Alignment.TRAILING)
+								.addComponent(fromLabel, Alignment.TRAILING))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(detailsPanelLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(toInput, GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+								.addComponent(fromInput, GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+								.addComponent(subjectInput, GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)))
+						.addComponent(mailTextPane, GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE))
+					.addGap(12))
+		);
+		detailsPanelLayout.setVerticalGroup(
+			detailsPanelLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(detailsPanelLayout.createSequentialGroup()
+					.addGap(1)
+					.addGroup(detailsPanelLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(fromInput, GroupLayout.PREFERRED_SIZE, 31, Short.MAX_VALUE)
+						.addComponent(fromLabel))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(detailsPanelLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(toLabel)
+						.addComponent(toInput, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(detailsPanelLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(subjectInput, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(subjectLabel))
+					.addGap(18)
+					.addComponent(mailTextPane, GroupLayout.DEFAULT_SIZE, 361, Short.MAX_VALUE))
+		);
 		detailsPanel.setLayout(detailsPanelLayout);
 
 		newMailBtn.setText("New mail");
@@ -178,6 +232,18 @@ public class MainForm extends javax.swing.JFrame {
 		setJMenuBar(mainMenuBar);
 
 		mailList = new JList();
+		mailList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				int index = mailList.getSelectedIndex();
+				if(index < 1)
+					return;
+				Mail mail  = mailListDetails.get(index);
+				fromInput.setText(mail.from);
+				subjectInput.setText(mail.subject);
+				mailText.setText(mail.body);
+				changeTitle(mail.subject);
+			}
+		});
 
 		JPanel jPanelMenu = new JPanel();
 		jPanelMenu.setForeground(new Color(0, 0, 0));
@@ -197,16 +263,16 @@ public class MainForm extends javax.swing.JFrame {
 							.addComponent(jPanelMenu, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(mailList, GroupLayout.PREFERRED_SIZE, 156, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(detailsPanel, GroupLayout.PREFERRED_SIZE, 466, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+							.addGap(35)
+							.addComponent(detailsPanel, GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)))
+					.addContainerGap())
 		);
 		layout.setVerticalGroup(
 			layout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-						.addComponent(mailList, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
 						.addComponent(detailsPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
+						.addComponent(mailList, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
 						.addComponent(jPanelMenu, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(layout.createParallelGroup(Alignment.TRAILING)
@@ -413,6 +479,8 @@ public class MainForm extends javax.swing.JFrame {
 		menuLogo.setHorizontalAlignment(SwingConstants.CENTER);
 		menuLogo.setForeground(Color.WHITE);
 		menuLogo.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		
+		JSeparator separator = new JSeparator();
 		GroupLayout gl_jPanelMenu = new GroupLayout(jPanelMenu);
 		gl_jPanelMenu.setHorizontalGroup(
 			gl_jPanelMenu.createParallelGroup(Alignment.TRAILING)
@@ -421,7 +489,9 @@ public class MainForm extends javax.swing.JFrame {
 						.addGroup(gl_jPanelMenu.createSequentialGroup()
 							.addGap(6)
 							.addComponent(lblMenu)
-							.addGap(1)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(separator, GroupLayout.PREFERRED_SIZE, 1, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(menuLogo, GroupLayout.PREFERRED_SIZE, 64, GroupLayout.PREFERRED_SIZE))
 						.addComponent(menuUserProfilePanel, GroupLayout.PREFERRED_SIZE, 150, Short.MAX_VALUE)
 						.addGroup(gl_jPanelMenu.createParallelGroup(Alignment.TRAILING, false)
@@ -434,9 +504,11 @@ public class MainForm extends javax.swing.JFrame {
 			gl_jPanelMenu.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_jPanelMenu.createSequentialGroup()
 					.addGap(10)
-					.addGroup(gl_jPanelMenu.createParallelGroup(Alignment.LEADING, false)
-						.addComponent(menuLogo, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(lblMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addGroup(gl_jPanelMenu.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_jPanelMenu.createParallelGroup(Alignment.LEADING, false)
+							.addComponent(menuLogo, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(lblMenu, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+						.addComponent(separator, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
 					.addComponent(menuNewMailPanel, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -445,7 +517,7 @@ public class MainForm extends javax.swing.JFrame {
 					.addComponent(menuRefreshPanel, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(menuUserProfilePanel, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(197, Short.MAX_VALUE))
+					.addContainerGap(194, Short.MAX_VALUE))
 		);
 		
 		newMailIcon = new JLabel("");
@@ -503,7 +575,7 @@ public class MainForm extends javax.swing.JFrame {
 	}// GEN-LAST:event_newMailItemActionPerformed
         
         private void refreshDB() {
-            ArrayList<Mail> mailArrayList = this.authenticator.getMailReader().getMessages(0, 20);
+            ArrayList<Mail> mailArrayList = this.authenticator.getMailReader().getMessages();
             if(mailArrayList.size() > 0){
                 boolean success = true;
                 this.connection.beginTransaction();
@@ -527,7 +599,9 @@ public class MainForm extends javax.swing.JFrame {
                 this.connection.commit();
             }
         }
-	
+	private void changeTitle(String newTitle) {
+		this.setTitle("Mailzy"+" - "+newTitle);
+	}
 	private void showMenu(JPanel panelName, JLabel labelname) {
 		
 		if (isSideBarOpen == false) {

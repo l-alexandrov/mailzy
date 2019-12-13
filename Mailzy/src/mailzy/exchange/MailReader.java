@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.MimeMultipart;
+
+import com.sun.mail.imap.IMAPFolder;import com.sun.mail.imap.SortTerm;
+
 import mailzy.Mail;
 // import javax.activation.*;
 /**
@@ -40,20 +43,21 @@ public class MailReader
     return  this.store!=null && this.store.isConnected();
   }
   
-    public ArrayList<Mail> getMessages(int begin, int end) {
+    public ArrayList<Mail> getMessages() {
 
       ArrayList<Mail> mailList = new ArrayList<Mail>();
       try{
           //open the inbox folder
-          Folder inbox = this.store.getFolder("INBOX");
+          Folder folder = this.store.getFolder("INBOX");
+          IMAPFolder inbox = (IMAPFolder) folder;
           inbox.open(Folder.READ_ONLY);
 
           // get a list of javamail messages as an array of messages
-          Message[] messages = inbox.getMessages();
+          Message[] messages = inbox.getMessagesByUID(1, UIDFolder.MAXUID);
 
-          for(int i = begin; i < end; i++)
+          for(int i = messages.length-1; i > messages.length-1-20; i--)
           {
-              if(i>=messages.length)
+              if(i<0)
                   break;
               String from = getFrom(messages[i]);
               if ( from==null){
