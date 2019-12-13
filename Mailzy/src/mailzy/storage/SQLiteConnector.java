@@ -71,16 +71,16 @@ public class SQLiteConnector {
         String column = String.join(", ", columns);
         String sql = "INSERT INTO " + table + " (" + column + ") VALUES ";
         for(String[] row: values){
-            sql+= "('"+ String.join("', '", row)+"'),";
+            sql+= "('"+ String.join("', '", row).replaceAll("[',\"]", "\\{1}")+"'),";
         }
         sql = sql.substring(0, sql.length()-1);
-        
         boolean success = true;
         try {
             Statement stmt  = this.conn.createStatement();
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
             success = false;
+            System.out.println(sql);
             System.out.println(e.getMessage());
         }
         return success;

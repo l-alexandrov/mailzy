@@ -155,5 +155,5 @@ public class Authenticator {
     private final MailReader mailReader;
     private MailSender mailSender;
     private final String fileName = System.getProperty("user.dir")+"/credentials.mlzy";
-    private boolean forgetOnExit = false;
+    private boolean forgetOnExit = true;
 }
