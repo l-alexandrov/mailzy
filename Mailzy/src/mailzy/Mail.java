@@ -5,7 +5,7 @@
  */
 package mailzy;
 
-import java.time.LocalDateTime;
+
 import java.util.Date;
 
 /**
@@ -17,7 +17,7 @@ public class Mail {
         this.from = from;
         this.subject = subject;
         this.lastModified = lastModified;
-        this.body = body;
+        this.body = body;;
     }
     public Mail(){};
     

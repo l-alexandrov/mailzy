@@ -5,12 +5,8 @@
  */
 package mailzy;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JMenuBar;
+
+import java.util.Date;
 import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
 
 /**
@@ -19,6 +15,9 @@ import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
  */
 public class NewMailDialog extends javax.swing.JDialog {
 
+
+	
+	
     /**
      * Creates new form NewMailDialog
      */
@@ -28,7 +27,7 @@ public class NewMailDialog extends javax.swing.JDialog {
         menuBar.add(editor.getEditMenu());
         menuBar.add(editor.getFormatMenu());
         menuBar.add(editor.getInsertMenu());
-
+        
         this.getContentPane().setLayout(null);
         
         labelFrom.setBounds(10,5,50,20);
@@ -54,6 +53,12 @@ public class NewMailDialog extends javax.swing.JDialog {
         editor.setBounds(0, 80, 780, 600);
         this.getContentPane().add(editor);
         this.setVisible(true);
+        
+        //blankMail.to= this.to;
+        blankMail.body= this.body;
+        blankMail.from=this.from;
+        blankMail.subject=this.subject;
+        blankMail.lastModified=this.date;
     }
    
     /**
@@ -114,12 +119,26 @@ public class NewMailDialog extends javax.swing.JDialog {
     private void buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonActionPerformed
         //TODO: Check if all fields are valid
         this.setVisible(false);
+        String toEmail = textTo.getText();
+        String subject = textSubject.getText();
+        String body = editor.getText();
+        String from = textFrom.getText();
+        this.subject = subject;
+        this.body = body;
+        this.from = from;
+        this.date = date;
+        this.to = toEmail;
         //this.getContentPane().setBackground(Color.red); //Test
     }//GEN-LAST:event_buttonActionPerformed
     
     
     private HTMLEditorPane editor = new HTMLEditorPane();
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public String body = null;
+    public String from = null;
+    public String subject = null;
+    public String to=null;
+    public Date date = new Date();
     private javax.swing.JButton button;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JLabel labelFrom;
@@ -128,6 +147,5 @@ public class NewMailDialog extends javax.swing.JDialog {
     private javax.swing.JTextField textFrom;
     private javax.swing.JTextField textTo;
     private javax.swing.JTextField textSubject;
-    
     // End of variables declaration//GEN-END:variables
 }

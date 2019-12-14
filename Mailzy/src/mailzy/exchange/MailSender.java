@@ -14,7 +14,7 @@ import javax.mail.internet.MimeMessage;
  * @author lalexandrov
  */
 public abstract class MailSender {
-    public boolean sendEmail(String toEmail, String subject, String body){
+    public boolean sendEmail(String toEmail,String fromEmail, String subject, String body){
         try {
           MimeMessage msg = new MimeMessage(this.session);
           //set message headers
@@ -22,7 +22,7 @@ public abstract class MailSender {
           msg.addHeader("format", "flowed");
           msg.addHeader("Content-Transfer-Encoding", "8bit");
 
-          msg.setFrom(new InternetAddress("no_reply@example.com", "NoReply-JD"));
+          msg.setFrom(new InternetAddress(fromEmail, "NoReply-JD"));
 
           msg.setReplyTo(InternetAddress.parse("no_reply@example.com", false));
 
@@ -32,7 +32,7 @@ public abstract class MailSender {
 
           msg.setSentDate(new Date());
 
-          msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail, false));
+          msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
           System.out.println("Message is ready");
           Transport.send(msg);
           
