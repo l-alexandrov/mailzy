@@ -6,8 +6,26 @@
 package mailzy;
 
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
+import javax.swing.JPanel;
+import java.awt.Color;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.SwingConstants;
+
+
+import java.awt.Dimension;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 /**
  *
@@ -75,6 +93,12 @@ public class NewMailDialog extends javax.swing.JDialog {
     	
     	textFrom = new javax.swing.JTextField();
     	textTo = new javax.swing.JTextField();
+    	textTo.addFocusListener(new FocusAdapter() {
+    		@Override
+    		public void focusLost(FocusEvent e) {
+    			test();
+    		}
+    	});
     	textSubject = new javax.swing.JTextField();
     	
         button = new javax.swing.JButton();
@@ -93,23 +117,64 @@ public class NewMailDialog extends javax.swing.JDialog {
             }
         });
         setJMenuBar(menuBar);
+        
+        panel = new JPanel();
+        panel.setBackground(new Color(29, 44, 99));
+        
+        label = new JLabel();
+        
+        label_1 = new JLabel();
+        label_1.setText("Mailzy");
+        label_1.setPreferredSize(new Dimension(150, 50));
+        label_1.setName("LOGO");
+        label_1.setMinimumSize(new Dimension(150, 50));
+        label_1.setMaximumSize(new Dimension(150, 50));
+        label_1.setHorizontalAlignment(SwingConstants.CENTER);
+        label_1.setForeground(Color.WHITE);
+        label_1.setFont(new Font("Dialog", Font.BOLD, 36));
+        label_1.setBackground(Color.WHITE);
+        GroupLayout gl_panel = new GroupLayout(panel);
+        gl_panel.setHorizontalGroup(
+        	gl_panel.createParallelGroup(Alignment.TRAILING)
+        		.addGap(0, 400, Short.MAX_VALUE)
+        		.addGroup(gl_panel.createSequentialGroup()
+        			.addContainerGap()
+        			.addComponent(label)
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addComponent(label_1, GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
+        			.addContainerGap())
+        );
+        gl_panel.setVerticalGroup(
+        	gl_panel.createParallelGroup(Alignment.LEADING)
+        		.addGap(0, 124, Short.MAX_VALUE)
+        		.addGroup(gl_panel.createSequentialGroup()
+        			.addContainerGap()
+        			.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+        				.addComponent(label, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+        				.addComponent(label_1, GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))
+        			.addContainerGap())
+        );
+        panel.setLayout(gl_panel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(291, Short.MAX_VALUE)
-                .addComponent(button)
-                .addGap(66, 66, 66))
+        	layout.createParallelGroup(Alignment.TRAILING)
+        		.addGroup(Alignment.LEADING, layout.createSequentialGroup()
+        			.addGap(428)
+        			.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+        				.addComponent(panel, GroupLayout.PREFERRED_SIZE, 352, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(button))
+        			.addContainerGap(66, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(123, 123, 123)
-                .addComponent(button)
-                .addContainerGap(145, Short.MAX_VALUE))
+        	layout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(layout.createSequentialGroup()
+        			.addComponent(panel, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
+        			.addGap(587)
+        			.addComponent(button)
+        			.addContainerGap(14, Short.MAX_VALUE))
         );
+        getContentPane().setLayout(layout);
 
         button.getAccessibleContext().setAccessibleName("button");
 
@@ -123,6 +188,7 @@ public class NewMailDialog extends javax.swing.JDialog {
         String subject = textSubject.getText();
         String body = editor.getText();
         String from = textFrom.getText();
+        
         this.subject = subject;
         this.body = body;
         this.from = from;
@@ -131,7 +197,36 @@ public class NewMailDialog extends javax.swing.JDialog {
         //this.getContentPane().setBackground(Color.red); //Test
     }//GEN-LAST:event_buttonActionPerformed
     
-    
+    public void test() {
+    	//List emails = new ArrayList();
+    	String toEmail = textTo.getText();
+    	String[] arr  = toEmail.split(" "); //Email to multiple addresses
+    	String regex = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
+    	String notValid = "Invalid ";
+    	boolean bol = false;
+    	Pattern p = Pattern.compile(regex);
+    	for(String test : arr) {
+    		Matcher m = p.matcher(test);
+    		System.out.println(test + " : " + m.matches());
+    		if(m.matches()==false) {
+    			
+    			notValid +=" " +  test;
+    			
+    			bol=true;
+    		}
+    		
+    	}
+    	if(bol==true) {
+    	labelTo.setToolTipText(notValid);
+    	labelTo.setForeground(Color.red);
+    	}
+    	else
+		{
+			labelTo.setForeground(Color.black);
+			labelTo.setToolTipText(null);
+		}
+    	
+    }
     private HTMLEditorPane editor = new HTMLEditorPane();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public String body = null;
@@ -147,5 +242,8 @@ public class NewMailDialog extends javax.swing.JDialog {
     private javax.swing.JTextField textFrom;
     private javax.swing.JTextField textTo;
     private javax.swing.JTextField textSubject;
+    private JPanel panel;
+    private JLabel label;
+    private JLabel label_1;
     // End of variables declaration//GEN-END:variables
 }
