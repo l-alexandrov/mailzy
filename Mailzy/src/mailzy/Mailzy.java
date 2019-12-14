@@ -16,6 +16,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JFrame;
+
+import org.apache.commons.text.StringEscapeUtils;
+
 import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
 import mailzy.exchange.MailProvider;
 import mailzy.storage.*;

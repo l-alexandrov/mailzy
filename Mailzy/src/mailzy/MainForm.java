@@ -23,6 +23,9 @@ import java.awt.Font;
 import java.time.format.DateTimeFormatter;
 import mailzy.storage.Authenticator;
 import javax.swing.event.ListSelectionListener;
+
+import org.apache.commons.text.StringEscapeUtils;
+
 import javax.swing.event.ListSelectionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -66,6 +69,10 @@ public class MainForm extends javax.swing.JFrame {
 		
 		this.detailsElementsVisible(true);
 	}
+	private void finishApp(boolean forceDelete) {
+		this.authenticator.finishCredentials(forceDelete);
+		
+	}
 	private void finishApp() {
 		this.authenticator.finishCredentials();
 		
@@ -76,7 +83,7 @@ public class MainForm extends javax.swing.JFrame {
             this.connection.query("SELECT * FROM mails WHERE reciever = '" + this.authenticator.getUserName() + "'");
             ResultSet rs = this.connection.fetch();
             while (rs.next()) {
-                this.mailListDetails.add(new Mail( rs.getString("sender"), rs.getString("subject"), rs.getDate("recieved_at") ,rs.getString("mail") ));
+                this.mailListDetails.add(new Mail( StringEscapeUtils.unescapeHtml4(rs.getString("sender")), StringEscapeUtils.unescapeHtml4(rs.getString("subject")), rs.getDate("recieved_at") ,StringEscapeUtils.unescapeHtml4(rs.getString("mail")) ));
             }
             for(int i=0;i< this.mailListDetails.size();i++){
                 ((DefaultListModel<String>) this.mailList.getModel()).addElement(this.mailListDetails.get(i).subject);
@@ -86,7 +93,7 @@ public class MainForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "A Database query error occured!");
             System.exit(1);
 		}
-		System.out.println(this.mailListDetails.get(0));
+		//System.out.println(this.mailListDetails.get(0));
 		
 	}
 
@@ -434,8 +441,8 @@ public class MainForm extends javax.swing.JFrame {
 		menuUserProfilePanel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				mailList.setVisible(false);
-				detailsPanel.setVisible(false);				
+				finishApp(true);
+				System.exit(0);
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -450,7 +457,7 @@ public class MainForm extends javax.swing.JFrame {
 		
 		lblProfile = new JLabel();
 		lblProfile.setForeground(Color.WHITE);
-		lblProfile.setText("Profile");
+		lblProfile.setText("Log out");
 		lblProfile.setHorizontalAlignment(SwingConstants.CENTER);
 		lblProfile.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		GroupLayout gl_menuUserProfilePanel = new GroupLayout(menuUserProfilePanel);
@@ -589,7 +596,14 @@ public class MainForm extends javax.swing.JFrame {
                 ArrayList<String[]> insertData = new ArrayList<String[]>();
                 DateTimeFormatter dbDateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 for(Mail mail: mailArrayList){
-                    insertData.add(new String[]{mail.from, this.authenticator.getUserName(), String.valueOf(mail.lastModified.getTime()), mail.subject, mail.body, String.valueOf(System.currentTimeMillis())});
+                    insertData.add(new String[]{
+                    		StringEscapeUtils.escapeHtml4(mail.from).replaceAll("'", "''"),
+                    		this.authenticator.getUserName(),
+                    		String.valueOf(mail.lastModified.getTime()),
+                    		StringEscapeUtils.escapeHtml4(mail.subject).replaceAll("'", "''"),
+                    		StringEscapeUtils.escapeHtml4(mail.body).replaceAll("'", "''"),
+                    		String.valueOf(System.currentTimeMillis())
+                    		});
                 }
                 if(!this.connection.multipleInsert("mails", columns, insertData)){
                     this.connection.rollBack();

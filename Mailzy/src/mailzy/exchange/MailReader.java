@@ -55,7 +55,7 @@ public class MailReader
           // get a list of javamail messages as an array of messages
           Message[] messages = inbox.getMessagesByUID(1, UIDFolder.MAXUID);
 
-          for(int i = messages.length-1; i > messages.length-1-20; i--)
+          for(int i = messages.length-1; i > messages.length-1-19; i--)
           {
               if(i<0)
                   break;

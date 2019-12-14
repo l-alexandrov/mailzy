@@ -8,6 +8,8 @@ package mailzy.storage;
 import java.sql.*;
 import java.util.ArrayList;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 /**
  *
  * @author lalexandrov
@@ -30,7 +32,6 @@ public class SQLiteConnector {
         try {
             Statement stmt  = this.conn.createStatement();
             stmt.execute(sql);
-            System.out.println("test");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -72,7 +73,7 @@ public class SQLiteConnector {
         String column = String.join(", ", columns);
         String sql = "INSERT INTO " + table + " (" + column + ") VALUES ";
         for(String[] row: values){
-            sql+= "('"+ String.join("', '", row).replaceAll("[',\"]", "\\{1}")+"'),";
+            sql+= "('"+ String.join("', '", row)+"'),";
         }
         sql = sql.substring(0, sql.length()-1);
         boolean success = true;

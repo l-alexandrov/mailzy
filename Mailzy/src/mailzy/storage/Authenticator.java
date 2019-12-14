@@ -139,6 +139,14 @@ public class Authenticator {
             file.delete();
         }
     }
+    public void finishCredentials(boolean forceDelete)
+    {
+        this.mailReader.finish();
+        if(forceDelete || forgetOnExit){            
+            File file = new File(fileName);
+            file.delete();
+        }
+    }
     
     public MailReader getMailReader(){
         return this.mailReader;
