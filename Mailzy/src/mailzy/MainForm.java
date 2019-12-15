@@ -36,6 +36,7 @@ import java.awt.event.WindowEvent;
  */
 public class MainForm extends javax.swing.JFrame {
 
+	private static final String String = null;
 	/**
 	 * Creates new form MainForm
          * @param authenticator
@@ -673,13 +674,13 @@ public class MainForm extends javax.swing.JFrame {
 		
 	}
 	
-
 	
 	private void showNewMailForm() {
             Mail mail = new Mail();
+
             new NewMailDialog(this, true, mail);
-            String toEmail = "iivaniivanov123asd@gmail.com";
-            authenticator.mailSender.sendEmail(toEmail, mail.from, mail.subject, mail.body);
+            
+            //authenticator.mailSender.sendEmail(toEmail, mail.from, mail.subject, mail.body);
             //TODO: Send it via this.authenticator.mailWriter and save it in the db
             
             

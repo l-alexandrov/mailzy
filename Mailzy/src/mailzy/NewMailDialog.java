@@ -18,9 +18,14 @@ import javax.swing.JPanel;
 
 import java.awt.AWTException;
 import java.awt.Color;
+
+import javax.mail.MessagingException;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.SystemTray;
@@ -28,6 +33,8 @@ import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
 
 import javax.swing.SwingConstants;
+
+import mailzy.exchange.GmailSender;
 
 import java.awt.*;
 import java.awt.TrayIcon.MessageType;
@@ -45,7 +52,7 @@ import java.awt.event.KeyEvent;
  */
 public class NewMailDialog extends javax.swing.JDialog {
 
-
+public final GmailSender send = new GmailSender();
 	
 	
     /**
@@ -141,7 +148,12 @@ public class NewMailDialog extends javax.swing.JDialog {
         button.setText("Send");
         button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonActionPerformed(evt);
+                try {
+					buttonActionPerformed(evt);
+				} catch (MessagingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 
             }
         });
@@ -241,24 +253,46 @@ public class NewMailDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonActionPerformed
+    private void buttonActionPerformed(java.awt.event.ActionEvent evt) throws MessagingException {//GEN-FIRST:event_buttonActionPerformed
         //TODO: Check if all fields are valid
     	showNotification();
     	//hideNotification();
-    	
         this.setVisible(false);
-        String toEmail = textTo.getText();
-        String subject = textSubject.getText();
+        String to = textTo.getText();
+        String subject1 = textSubject.getText();
+        String body = editor.getText();
+        String from = textFrom.getText();
+        sendMail();
+        
+        
+//    	try {
+//			gs.gMailSend(to, from, subject, body);
+//		} catch (MessagingException e) {
+//			// TODO Auto-generated catch block
+//			System.out.println("Error!!!");
+//			e.printStackTrace();
+//			
+//		}
+
+//        
+//        this.subject = subject;
+//        this.body = body;
+//        this.from = from;
+//        this.date = date;
+//        this.to = toEmail;
+        //this.getContentPane().setBackground(Color.red); //Test
+    }//GEN-LAST:event_buttonActionPerformed
+    
+    private void sendMail() throws MessagingException {
+    	JFrame frame = new JFrame("Password Frame can not be better!");
+    	String pass = JOptionPane.showInputDialog(frame, "Enter your password!");
+    	String to = textTo.getText();
+        String subject1 = textSubject.getText();
         String body = editor.getText();
         String from = textFrom.getText();
         
-        this.subject = subject;
-        this.body = body;
-        this.from = from;
-        this.date = date;
-        this.to = toEmail;
-        //this.getContentPane().setBackground(Color.red); //Test
-    }//GEN-LAST:event_buttonActionPerformed
+        send.gMailSend(to, from, subject1, body, pass);
+    }
     
     private void isValidEmail() {
     	//List emails = new ArrayList();
@@ -370,4 +404,5 @@ public class NewMailDialog extends javax.swing.JDialog {
     private JLabel label_1;
     private JPanel panelNotification;
     private JLabel labelNotification;
+    private GmailSender gs;
 }
