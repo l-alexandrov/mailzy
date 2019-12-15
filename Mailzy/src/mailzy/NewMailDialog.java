@@ -45,7 +45,7 @@ public class NewMailDialog extends javax.swing.JDialog {
         menuBar.add(editor.getEditMenu());
         menuBar.add(editor.getFormatMenu());
         menuBar.add(editor.getInsertMenu());
-        
+        button.setEnabled(false);
         this.getContentPane().setLayout(null);
         
         labelFrom.setBounds(10,5,50,20);
@@ -77,6 +77,7 @@ public class NewMailDialog extends javax.swing.JDialog {
         blankMail.from=this.from;
         blankMail.subject=this.subject;
         blankMail.lastModified=this.date;
+        
     }
    
     /**
@@ -97,6 +98,7 @@ public class NewMailDialog extends javax.swing.JDialog {
     		@Override
     		public void focusLost(FocusEvent e) {
     			test();
+    			isValidToSend();
     		}
     	});
     	textSubject = new javax.swing.JTextField();
@@ -225,8 +227,22 @@ public class NewMailDialog extends javax.swing.JDialog {
 			labelTo.setForeground(Color.black);
 			labelTo.setToolTipText(null);
 		}
-    	
+
     }
+    
+    public void isValidToSend() {
+		//TODO
+    	//Color red = new Color();
+    	
+    	Color red = labelTo.getForeground();
+    	if(red != Color.red) {
+    		button.setEnabled(true);
+    	}
+    	else {
+    		button.setEnabled(false);
+    	}
+    	
+	}
     private HTMLEditorPane editor = new HTMLEditorPane();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public String body = null;
