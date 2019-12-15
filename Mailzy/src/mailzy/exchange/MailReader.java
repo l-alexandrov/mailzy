@@ -10,7 +10,7 @@ import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.MimeMultipart;
 
-import com.sun.mail.imap.IMAPFolder;import com.sun.mail.imap.SortTerm;
+import com.sun.mail.imap.IMAPFolder;
 
 import mailzy.Mail;
 // import javax.activation.*;

@@ -7,19 +7,11 @@ package mailzy;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 
-import org.apache.commons.text.StringEscapeUtils;
-
-import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
 import mailzy.exchange.MailProvider;
 import mailzy.storage.*;
 
@@ -48,7 +40,7 @@ public class Mailzy {
         Mailzy mailzy = new Mailzy();    
     }
     
-    private HashMap loadProviders () {
+    private HashMap<String, MailProvider> loadProviders () {
         HashMap<String, MailProvider> providers = new HashMap<String, MailProvider>();
         try {
             File credentials = new File(System.getProperty("user.dir")+"/providers.txt");

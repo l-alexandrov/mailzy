@@ -10,7 +10,6 @@ import java.security.*;
 import java.security.spec.*;
 import java.util.*;
 import javax.crypto.*;
-import javax.mail.*;
 import mailzy.exchange.MailProvider;
 import mailzy.exchange.MailReader;
 import mailzy.exchange.MailSender;

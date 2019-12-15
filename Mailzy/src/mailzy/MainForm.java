@@ -12,7 +12,6 @@ import mailzy.storage.SQLiteConnector;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
@@ -243,7 +242,7 @@ public class MainForm extends javax.swing.JFrame {
 		mailList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				int index = mailList.getSelectedIndex();
-				if(index < 1)
+				if(index < 0)
 					return;
 				Mail mail  = mailListDetails.get(index);
 				fromInput.setText(mail.from);

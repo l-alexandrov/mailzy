@@ -11,13 +11,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.swing.ImageIcon;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Scanner;
 import javax.swing.JFrame;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import mailzy.storage.Authenticator;
 
@@ -433,61 +427,7 @@ public class LoginForm extends javax.swing.JDialog {
     
         
         
-    private ArrayList<String> test() throws FileNotFoundException, IOException, URISyntaxException{
-        URL url = getClass().getResource("..//mailzy//storage//test.txt");
-        File file = new File(url.toURI());
-        System.out.println(file);
-        ///BufferedReader br = new BufferedReader(new FileReader(file));
-        ///String line= br.readLine();
-        ArrayList<String> arr = new ArrayList<String>();
-        String path = file.toString();
-        Scanner sc = new Scanner(new File(path));
-        while(sc.hasNextLine()){
-            arr.add(sc.nextLine());
-        } 
-        for(String column: arr ){
-            System.out.println(column); //list all data
-        }
-        return arr;
-    }
 
-//    public static void main(String args[]) {
-//        /* Set the Nimbus look and feel */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-//         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-//        //</editor-fold>
-//
-//        /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//               
-//                
-//                //f.setResizable(false);
-//            }
-//        });
-//        
-//        
-//        
-//    }
     private boolean passwdVisibleClicked = false;
     private final Authenticator authenticator;
     // Variables declaration - do not modify//GEN-BEGIN:variables

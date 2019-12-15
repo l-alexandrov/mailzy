@@ -8,8 +8,6 @@ package mailzy.storage;
 import java.sql.*;
 import java.util.ArrayList;
 
-import org.apache.commons.text.StringEscapeUtils;
-
 /**
  *
  * @author lalexandrov

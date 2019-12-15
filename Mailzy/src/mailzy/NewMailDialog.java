@@ -5,17 +5,11 @@
  */
 package mailzy;
 
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import java.awt.AWTException;
 import java.awt.Color;
@@ -23,10 +17,7 @@ import java.awt.Color;
 import javax.mail.MessagingException;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.SystemTray;
@@ -38,8 +29,6 @@ import javax.swing.SwingConstants;
 import mailzy.exchange.GmailSender;
 
 import java.awt.*;
-import java.awt.TrayIcon.MessageType;
-
 import java.awt.Dimension;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.event.FocusAdapter;
