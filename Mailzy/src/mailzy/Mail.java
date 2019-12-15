@@ -17,10 +17,16 @@ public class Mail {
         this.from = from;
         this.subject = subject;
         this.lastModified = lastModified;
-        this.body = body;;
+        this.body = body;
     }
     public Mail(){};
     
+    public Mail(String to, String subject, String body){
+        this.to = to;
+        this.subject = subject;
+        this.body = body;
+    }
+    public String to;
     public String from;
     public String subject;
     public Date lastModified; 

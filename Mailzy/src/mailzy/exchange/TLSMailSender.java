@@ -18,19 +18,20 @@ public class TLSMailSender extends MailSender {
         this.port = port;
         this.fromMail = fromMail;
         this.password = password;
+        establishConnection();
     }
 
     @Override
     protected void establishConnection() {
         Properties props = new Properties();
-        props.put("mail.smtp.host", "smtp.gmail.com"); //SMTP Host
+        props.put("mail.smtp.host", this.SMTP); //SMTP Host
         props.put("mail.smtp.port", this.port); //TLS Port
         props.put("mail.smtp.auth", "true"); //enable authentication
         props.put("mail.smtp.starttls.enable", "true"); //enable STARTTLS
 
         Authenticator auth = new AuthenticatorImpl(this.fromMail, this.password);
 
-        this.session = Session.getDefaultInstance(props, auth);
+        this.session = Session.getInstance(props, auth);
     }
     
     private final String fromMail;

@@ -15,6 +15,7 @@ import java.util.regex.Matcher;
 
 import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import java.awt.AWTException;
 import java.awt.Color;
@@ -45,6 +46,8 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  *
@@ -58,8 +61,14 @@ public final GmailSender send = new GmailSender();
     /**
      * Creates new form NewMailDialog
      */
-    public NewMailDialog(java.awt.Frame parent, boolean modal, Mail blankMail) {
+    public NewMailDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        addWindowListener(new WindowAdapter() {
+        	@Override
+        	public void windowClosing(WindowEvent e) {
+        		resetDiaogData();
+        	}
+        });
         initComponents();
         
         try {
@@ -73,21 +82,15 @@ public final GmailSender send = new GmailSender();
         menuBar.add(editor.getInsertMenu());
         button.setEnabled(false);
         this.getContentPane().setLayout(null);
-        
-        labelFrom.setBounds(10,5,50,20);
-        labelFrom.setText("From");
         labelTo.setText("To");
         labelSubject.setText("Subject");
 		labelTo.setBounds(10,25,50,20);
 		labelSubject.setBounds(10,45,50,20);
-		textFrom.setBounds(70,5,300,20);
 		textTo.setBounds(70,25,300,20);
 		textSubject.setBounds(70,45,300,20);
 		
-		this.getContentPane().add(labelFrom);
 		this.getContentPane().add(labelTo);
 		this.getContentPane().add(labelSubject);
-		this.getContentPane().add(textFrom);
 		this.getContentPane().add(textTo);
 		this.getContentPane().add(textSubject);
 		
@@ -97,12 +100,6 @@ public final GmailSender send = new GmailSender();
         editor.setBounds(0, 80, 780, 600);
         this.getContentPane().add(editor);
         this.setVisible(true);
-        
-        //blankMail.to= this.to;
-        blankMail.body= this.body;
-        blankMail.from=this.from;
-        blankMail.subject=this.subject;
-        blankMail.lastModified=this.date;
         
     }
    
@@ -114,11 +111,9 @@ public final GmailSender send = new GmailSender();
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-    	labelFrom = new javax.swing.JLabel();
     	labelTo = new javax.swing.JLabel();
     	labelSubject = new javax.swing.JLabel();
     	
-    	textFrom = new javax.swing.JTextField();
     	textTo = new javax.swing.JTextField();
     	textTo.addFocusListener(new FocusAdapter() {
     		@Override
@@ -258,41 +253,9 @@ public final GmailSender send = new GmailSender();
     	showNotification();
     	//hideNotification();
         this.setVisible(false);
-        String to = textTo.getText();
-        String subject1 = textSubject.getText();
-        String body = editor.getText();
-        String from = textFrom.getText();
-        sendMail();
         
-        
-//    	try {
-//			gs.gMailSend(to, from, subject, body);
-//		} catch (MessagingException e) {
-//			// TODO Auto-generated catch block
-//			System.out.println("Error!!!");
-//			e.printStackTrace();
-//			
-//		}
-
-//        
-//        this.subject = subject;
-//        this.body = body;
-//        this.from = from;
-//        this.date = date;
-//        this.to = toEmail;
-        //this.getContentPane().setBackground(Color.red); //Test
     }//GEN-LAST:event_buttonActionPerformed
     
-    private void sendMail() throws MessagingException {
-    	JFrame frame = new JFrame("Password Frame can not be better!");
-    	String pass = JOptionPane.showInputDialog(frame, "Enter your password!");
-    	String to = textTo.getText();
-        String subject1 = textSubject.getText();
-        String body = editor.getText();
-        String from = textFrom.getText();
-        
-        send.gMailSend(to, from, subject1, body, pass);
-    }
     
     private void isValidEmail() {
     	//List emails = new ArrayList();
@@ -365,6 +328,17 @@ public final GmailSender send = new GmailSender();
 		th.start();
 		
     }
+    public Mail getMail() {
+    	if(this.textTo.getText() == "" || this.textSubject.getText() == "" || this.editor.getText() == "")
+    		return null;
+    	return new Mail( this.textTo.getText(), this.textSubject.getText(), this.editor.getText() );
+    }
+
+	private void resetDiaogData() {
+		this.editor.setText("");
+		this.textTo.setText("");
+		this.textSubject.setText("");
+	}
     public void displayTray() throws AWTException {
         //Obtain only one instance of the SystemTray object
         SystemTray tray = SystemTray.getSystemTray();
@@ -386,17 +360,10 @@ public final GmailSender send = new GmailSender();
     
     private HTMLEditorPane editor = new HTMLEditorPane();
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public String body = null;
-    public String from = null;
-    public String subject = null;
-    public String to=null;
-    public Date date = new Date();
     private javax.swing.JButton button;
     private javax.swing.JMenuBar menuBar;
-    private javax.swing.JLabel labelFrom;
     private javax.swing.JLabel labelTo;
     private javax.swing.JLabel labelSubject;
-    private javax.swing.JTextField textFrom;
     private javax.swing.JTextField textTo;
     private javax.swing.JTextField textSubject;
     private JPanel panel;
@@ -404,5 +371,4 @@ public final GmailSender send = new GmailSender();
     private JLabel label_1;
     private JPanel panelNotification;
     private JLabel labelNotification;
-    private GmailSender gs;
 }

@@ -8,6 +8,7 @@ import java.util.Date;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 /**
  *
@@ -18,18 +19,16 @@ public abstract class MailSender {
         try {
           MimeMessage msg = new MimeMessage(this.session);
           //set message headers
-          msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
+          msg.addHeader("Content-Type", "text/html; charset=UTF-8");
           msg.addHeader("format", "flowed");
           msg.addHeader("Content-Transfer-Encoding", "8bit");
+          msg.setFrom(new InternetAddress(fromEmail, fromEmail));
 
-          msg.setFrom(new InternetAddress(fromEmail, "NoReply-JD"));
-
-          msg.setReplyTo(InternetAddress.parse("no_reply@example.com", false));
+          msg.setReplyTo(InternetAddress.parse(fromEmail, false));
 
           msg.setSubject(subject, "UTF-8");
-
-          msg.setText(body, "UTF-8");
-
+          
+          msg.setContent(body, "text/html; charset=utf-8");
           msg.setSentDate(new Date());
 
           msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));

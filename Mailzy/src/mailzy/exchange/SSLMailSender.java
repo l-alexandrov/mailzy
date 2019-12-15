@@ -18,6 +18,7 @@ public class SSLMailSender extends MailSender {
         this.port = port;
         this.fromMail = fromMail;
         this.password = password;
+        establishConnection();
     }
 
     @Override
@@ -32,7 +33,7 @@ public class SSLMailSender extends MailSender {
 
         Authenticator auth = new AuthenticatorImpl(this.fromMail, this.password);
 
-        this.session = Session.getDefaultInstance(props, auth);
+        this.session = Session.getInstance(props, auth);
     }
     
     private final String fromMail;

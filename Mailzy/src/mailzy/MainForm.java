@@ -676,9 +676,12 @@ public class MainForm extends javax.swing.JFrame {
 	
 	
 	private void showNewMailForm() {
-            Mail mail = new Mail();
-
-            new NewMailDialog(this, true, mail);
+            NewMailDialog dialog = new NewMailDialog(this, true);
+            Mail mail = dialog.getMail();
+            if(mail==null)
+            	return;
+            this.authenticator.getMailSender().sendEmail(mail.to, this.authenticator.getUserName(), mail.subject, mail.body);
+            
             
             //authenticator.mailSender.sendEmail(toEmail, mail.from, mail.subject, mail.body);
             //TODO: Send it via this.authenticator.mailWriter and save it in the db

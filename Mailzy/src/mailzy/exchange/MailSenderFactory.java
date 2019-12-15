@@ -15,7 +15,7 @@ public class MailSenderFactory {
     }
     
     public static MailSender getMailer(String encryption, String smtpServer, short port, String fromMail, String password){
-        if("TLS".equals(encryption.toUpperCase())){
+        if("TLS".equals(encryption.toUpperCase()) || "STARTTLS".equals(encryption.toUpperCase())){
             return new TLSMailSender(smtpServer, port, fromMail, password);
         } else if ("SSL".equals(encryption.toUpperCase())){
             return new SSLMailSender(smtpServer, port, fromMail, password);
