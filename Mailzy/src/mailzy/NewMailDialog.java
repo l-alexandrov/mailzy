@@ -9,23 +9,35 @@ package mailzy;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
 import javax.swing.JPanel;
+
+import java.awt.AWTException;
 import java.awt.Color;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.Image;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
+
 import javax.swing.SwingConstants;
 
+import java.awt.*;
+import java.awt.TrayIcon.MessageType;
 
 import java.awt.Dimension;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
  *
@@ -42,6 +54,13 @@ public class NewMailDialog extends javax.swing.JDialog {
     public NewMailDialog(java.awt.Frame parent, boolean modal, Mail blankMail) {
         super(parent, modal);
         initComponents();
+        
+        try {
+			displayTray();
+		} catch (AWTException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         menuBar.add(editor.getEditMenu());
         menuBar.add(editor.getFormatMenu());
         menuBar.add(editor.getInsertMenu());
@@ -97,11 +116,19 @@ public class NewMailDialog extends javax.swing.JDialog {
     	textTo.addFocusListener(new FocusAdapter() {
     		@Override
     		public void focusLost(FocusEvent e) {
-    			test();
+    			showNotification();
+    			
+    			isValidEmail();
     			isValidToSend();
     		}
     	});
     	textSubject = new javax.swing.JTextField();
+    	textSubject.addKeyListener(new KeyAdapter() {
+    		@Override
+    		public void keyPressed(KeyEvent e) {
+    			subjectLen();
+    		}
+    	});
     	
         button = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
@@ -157,25 +184,56 @@ public class NewMailDialog extends javax.swing.JDialog {
         			.addContainerGap())
         );
         panel.setLayout(gl_panel);
-
+        
+        panelNotification = new JPanel();
+        panelNotification.setLocation(50, 50);
+        panelNotification.setBackground(new Color(29, 44, 99));
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
-        	layout.createParallelGroup(Alignment.TRAILING)
-        		.addGroup(Alignment.LEADING, layout.createSequentialGroup()
-        			.addGap(428)
-        			.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-        				.addComponent(panel, GroupLayout.PREFERRED_SIZE, 352, GroupLayout.PREFERRED_SIZE)
-        				.addComponent(button))
-        			.addContainerGap(66, Short.MAX_VALUE))
+        	layout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(layout.createSequentialGroup()
+        			.addGroup(layout.createParallelGroup(Alignment.LEADING)
+        				.addGroup(layout.createSequentialGroup()
+        					.addGap(428)
+        					.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+        						.addComponent(panel, GroupLayout.PREFERRED_SIZE, 352, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(button)))
+        				.addGroup(layout.createSequentialGroup()
+        					.addGap(241)
+        					.addComponent(panelNotification, GroupLayout.PREFERRED_SIZE, 325, GroupLayout.PREFERRED_SIZE)))
+        			.addContainerGap(57, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
         	layout.createParallelGroup(Alignment.LEADING)
         		.addGroup(layout.createSequentialGroup()
         			.addComponent(panel, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
         			.addGap(587)
-        			.addComponent(button)
-        			.addContainerGap(14, Short.MAX_VALUE))
+        			.addGroup(layout.createParallelGroup(Alignment.LEADING)
+        				.addComponent(button)
+        				.addComponent(panelNotification, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        			.addContainerGap())
         );
+        
+        labelNotification = new JLabel("New label");
+        labelNotification.setForeground(Color.WHITE);
+        labelNotification.setFont(new Font("Dialog", Font.BOLD, 36));
+        labelNotification.setHorizontalAlignment(SwingConstants.CENTER);
+        GroupLayout gl_panelNotification = new GroupLayout(panelNotification);
+        gl_panelNotification.setHorizontalGroup(
+        	gl_panelNotification.createParallelGroup(Alignment.TRAILING)
+        		.addGroup(gl_panelNotification.createSequentialGroup()
+        			.addContainerGap(110, Short.MAX_VALUE)
+        			.addComponent(labelNotification, GroupLayout.PREFERRED_SIZE, 147, GroupLayout.PREFERRED_SIZE)
+        			.addGap(68))
+        );
+        gl_panelNotification.setVerticalGroup(
+        	gl_panelNotification.createParallelGroup(Alignment.LEADING)
+        		.addGroup(gl_panelNotification.createSequentialGroup()
+        			.addGap(24)
+        			.addComponent(labelNotification, GroupLayout.PREFERRED_SIZE, 19, GroupLayout.PREFERRED_SIZE)
+        			.addContainerGap(44, Short.MAX_VALUE))
+        );
+        panelNotification.setLayout(gl_panelNotification);
         getContentPane().setLayout(layout);
 
         button.getAccessibleContext().setAccessibleName("button");
@@ -185,6 +243,9 @@ public class NewMailDialog extends javax.swing.JDialog {
 
     private void buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonActionPerformed
         //TODO: Check if all fields are valid
+    	showNotification();
+    	//hideNotification();
+    	
         this.setVisible(false);
         String toEmail = textTo.getText();
         String subject = textSubject.getText();
@@ -199,7 +260,7 @@ public class NewMailDialog extends javax.swing.JDialog {
         //this.getContentPane().setBackground(Color.red); //Test
     }//GEN-LAST:event_buttonActionPerformed
     
-    public void test() {
+    private void isValidEmail() {
     	//List emails = new ArrayList();
     	String toEmail = textTo.getText();
     	String[] arr  = toEmail.split(" "); //Email to multiple addresses
@@ -230,10 +291,14 @@ public class NewMailDialog extends javax.swing.JDialog {
 
     }
     
-    public void isValidToSend() {
-		//TODO
-    	//Color red = new Color();
-    	
+    private void subjectLen() {
+    	if(textSubject.getText().length()>=40)
+        {
+			textSubject.setText(textSubject.getText().substring(0, 39));
+        }
+    }
+    
+    private void isValidToSend() {
     	Color red = labelTo.getForeground();
     	if(red != Color.red) {
     		button.setEnabled(true);
@@ -243,6 +308,48 @@ public class NewMailDialog extends javax.swing.JDialog {
     	}
     	
 	}
+    
+    private void showNotification() {
+    	labelNotification.setText("Send");
+    	Thread th = new Thread() {
+			@Override
+			public void run() {
+				for (int i = 0; i <= 150; i++) {
+					try {
+						Thread.sleep(8);
+					} catch (InterruptedException ex) {
+
+					}
+					panelNotification.setSize(panelNotification.getSize().width, i);
+					labelNotification.setLocation(i - 37, 10);
+				}
+				
+				// System.out.println(lblMenu.getLocation());
+			}
+
+		};
+		th.start();
+		
+    }
+    public void displayTray() throws AWTException {
+        //Obtain only one instance of the SystemTray object
+        SystemTray tray = SystemTray.getSystemTray();
+
+        //If the icon is a file
+        Image image = Toolkit.getDefaultToolkit().createImage("icon.png");
+        //Alternative (if the icon is on the classpath):
+        //Image image = Toolkit.getDefaultToolkit().createImage(getClass().getResource("icon.png"));
+
+        TrayIcon trayIcon = new TrayIcon(image, "Tray Demo");
+        //Let the system resize the image if needed
+        trayIcon.setImageAutoSize(true);
+        //Set tooltip text for the tray icon
+        trayIcon.setToolTip("System tray icon demo");
+        tray.add(trayIcon);
+
+        trayIcon.displayMessage("Message sent successfully", "Mailzy", MessageType.INFO);
+    }
+    
     private HTMLEditorPane editor = new HTMLEditorPane();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public String body = null;
@@ -261,5 +368,6 @@ public class NewMailDialog extends javax.swing.JDialog {
     private JPanel panel;
     private JLabel label;
     private JLabel label_1;
-    // End of variables declaration//GEN-END:variables
+    private JPanel panelNotification;
+    private JLabel labelNotification;
 }
