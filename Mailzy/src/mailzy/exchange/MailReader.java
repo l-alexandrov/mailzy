@@ -89,7 +89,8 @@ public class MailReader
     }
     private String getTextFromMessage(Message message) throws MessagingException, IOException {
         String result = "";
-        if (message.isMimeType("text/plain")) {
+        String a=message.getContentType();
+        if (message.isMimeType("text/plain") || message.isMimeType("text/html")) {
             result = message.getContent().toString();
         } else if (message.isMimeType("multipart/*")) {
             MimeMultipart mimeMultipart = (MimeMultipart) message.getContent();

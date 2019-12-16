@@ -12,6 +12,7 @@ import mailzy.storage.SQLiteConnector;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
@@ -20,6 +21,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.time.format.DateTimeFormatter;
+
+import mailzy.exchange.MailSender;
+import mailzy.exchange.Notification;
 import mailzy.storage.Authenticator;
 import javax.swing.event.ListSelectionListener;
 
@@ -34,6 +38,8 @@ import java.awt.event.WindowEvent;
  * @author hrist
  */
 public class MainForm extends javax.swing.JFrame {
+	
+	public final Notification nt = new Notification();
 
 	private static final String String = null;
 	/**
@@ -46,9 +52,11 @@ public class MainForm extends javax.swing.JFrame {
 			public void windowClosing(WindowEvent e) {
 				finishApp();
 			}
-
+			
 
 		});
+		
+		
 		initComponents();
 		this.setTitle("Mailzy");
 		this.detailsElementsVisible(false);
@@ -581,6 +589,7 @@ public class MainForm extends javax.swing.JFrame {
 		
 	}// GEN-LAST:event_newMailItemActionPerformed
         
+	
         private void refreshDB() {
             ArrayList<Mail> mailArrayList = this.authenticator.getMailReader().getMessages();
             if(mailArrayList.size() > 0){
@@ -677,19 +686,38 @@ public class MainForm extends javax.swing.JFrame {
 	private void showNewMailForm() {
             NewMailDialog dialog = new NewMailDialog(this, true);
             Mail mail = dialog.getMail();
+            
             if(mail==null)
             	return;
-            this.authenticator.getMailSender().sendEmail(mail.to, this.authenticator.getUserName(), mail.subject, mail.body);
-            
-            
+            this.isSend = this.authenticator.getMailSender().sendEmail(mail.to, this.authenticator.getUserName(), mail.subject, mail.body);            
             //authenticator.mailSender.sendEmail(toEmail, mail.from, mail.subject, mail.body);
-            //TODO: Send it via this.authenticator.mailWriter and save it in the db
-            
-            
+            //TODO: Send it via this.authenticator.mailWriter and save it in the db        
+            showNotification();
 		//frame.getContentPane().add(detailsPanel,BorderLayout.CENTER); 
 		//detailsPanel.add(c4Panel,BorderLayout.CENTER); 
 	}
-        boolean isSideBarOpen = false;
+	
+	public void showNotification() {
+		if(this.isSend) {
+			try {
+				nt.displayTray("Mailzy - Message send!", "Message send syccessfuly");
+			} catch (AWTException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else {
+			try {
+				nt.displayTray("Mailzy - Error!", "Message can not be send! Click here for more information.");
+			} catch (AWTException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+        boolean isSideBarOpen = false;   
+    private boolean isSend;    
 	private ArrayList<Mail> mailListDetails;
 	private SQLiteConnector connection;
         private final Authenticator authenticator;
