@@ -8,10 +8,13 @@ package mailzy;
 import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
+
 import mailzy.storage.SQLiteConnector;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
@@ -19,7 +22,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
+import java.awt.Image;
 import java.time.format.DateTimeFormatter;
+
+import mailzy.exchange.MailSender;
+import mailzy.exchange.Notification;
 import mailzy.storage.Authenticator;
 import javax.swing.event.ListSelectionListener;
 
@@ -28,12 +35,15 @@ import org.apache.commons.text.StringEscapeUtils;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.Toolkit;
 
 /**
  *
  * @author hrist
  */
 public class MainForm extends javax.swing.JFrame {
+	
+	public final Notification nt = new Notification();
 
 	private static final String String = null;
 	/**
@@ -41,14 +51,22 @@ public class MainForm extends javax.swing.JFrame {
          * @param authenticator
 	 */
 	public MainForm(Authenticator authenticator) {
+		List<Image> icons = new ArrayList<Image>();
+		icons.add(Toolkit.getDefaultToolkit().getImage(MainForm.class.getResource("/swing/images/22x22.png")));
+		icons.add(Toolkit.getDefaultToolkit().getImage(MainForm.class.getResource("/swing/images/32x32.png")));
+		
+		setIconImages(icons);
+		
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				finishApp();
 			}
-
+			
 
 		});
+		
+		
 		initComponents();
 		this.setTitle("Mailzy");
 		this.detailsElementsVisible(false);
@@ -143,14 +161,6 @@ public class MainForm extends javax.swing.JFrame {
 		subjectInput = new javax.swing.JTextField();
 		subjectInput.setEditable(false);
 		speechPanel = new javax.swing.JPanel();
-		newMailBtn = new javax.swing.JButton();
-		newMailBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-			}
-		});
-
-		speechBtn = new javax.swing.JToggleButton();
 		mainMenuBar = new javax.swing.JMenuBar();
 		mailMenu = new javax.swing.JMenu();
 		newMailItem = new javax.swing.JMenuItem();
@@ -206,16 +216,16 @@ public class MainForm extends javax.swing.JFrame {
 		);
 		detailsPanel.setLayout(detailsPanelLayout);
 
-		newMailBtn.setText("New mail");
-
 		javax.swing.GroupLayout speechPanelLayout = new javax.swing.GroupLayout(speechPanel);
-		speechPanelLayout.setHorizontalGroup(speechPanelLayout.createParallelGroup(Alignment.TRAILING)
-				.addComponent(newMailBtn, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE));
-		speechPanelLayout.setVerticalGroup(speechPanelLayout.createParallelGroup(Alignment.TRAILING)
-				.addComponent(newMailBtn, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE));
+		speechPanelLayout.setHorizontalGroup(
+			speechPanelLayout.createParallelGroup(Alignment.TRAILING)
+				.addGap(0, 140, Short.MAX_VALUE)
+		);
+		speechPanelLayout.setVerticalGroup(
+			speechPanelLayout.createParallelGroup(Alignment.TRAILING)
+				.addGap(0, 23, Short.MAX_VALUE)
+		);
 		speechPanel.setLayout(speechPanelLayout);
-
-		speechBtn.setText("Speech");
 
 		mailMenu.setText("New Mail");
 		mailMenu.addActionListener(new java.awt.event.ActionListener() {
@@ -262,10 +272,7 @@ public class MainForm extends javax.swing.JFrame {
 			layout.createParallelGroup(Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup(Alignment.LEADING)
-						.addGroup(layout.createSequentialGroup()
-							.addComponent(speechPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(speechBtn))
+						.addComponent(speechPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addGroup(layout.createSequentialGroup()
 							.addComponent(jPanelMenu, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
@@ -281,10 +288,8 @@ public class MainForm extends javax.swing.JFrame {
 						.addComponent(detailsPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
 						.addComponent(mailList, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
 						.addComponent(jPanelMenu, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-						.addComponent(speechPanel, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
-						.addComponent(speechBtn, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)))
+					.addGap(12)
+					.addComponent(speechPanel, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
 		);
 		JLabel menuLogo = new JLabel("Mailzy");
 		JLabel lblMenu = new JLabel();  
@@ -570,6 +575,7 @@ public class MainForm extends javax.swing.JFrame {
 		pack();
 		
 		
+		
 	}// </editor-fold>//GEN-END:initComponents
 
 	private void mailMenuActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_mailMenuActionPerformed
@@ -581,6 +587,7 @@ public class MainForm extends javax.swing.JFrame {
 		
 	}// GEN-LAST:event_newMailItemActionPerformed
         
+	
         private void refreshDB() {
             ArrayList<Mail> mailArrayList = this.authenticator.getMailReader().getMessages();
             if(mailArrayList.size() > 0){
@@ -677,19 +684,38 @@ public class MainForm extends javax.swing.JFrame {
 	private void showNewMailForm() {
             NewMailDialog dialog = new NewMailDialog(this, true);
             Mail mail = dialog.getMail();
+            
             if(mail==null)
             	return;
-            this.authenticator.getMailSender().sendEmail(mail.to, this.authenticator.getUserName(), mail.subject, mail.body);
-            
-            
+            this.isSend = this.authenticator.getMailSender().sendEmail(mail.to, this.authenticator.getUserName(), mail.subject, mail.body);            
             //authenticator.mailSender.sendEmail(toEmail, mail.from, mail.subject, mail.body);
-            //TODO: Send it via this.authenticator.mailWriter and save it in the db
-            
-            
+            //TODO: Send it via this.authenticator.mailWriter and save it in the db        
+            showNotification();
 		//frame.getContentPane().add(detailsPanel,BorderLayout.CENTER); 
 		//detailsPanel.add(c4Panel,BorderLayout.CENTER); 
 	}
-        boolean isSideBarOpen = false;
+	
+	public void showNotification() {
+		if(this.isSend) {
+			try {
+				nt.displayTray("Mailzy - Message send!", "Message send syccessfuly");
+			} catch (AWTException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else {
+			try {
+				nt.displayTray("Mailzy - Error!", "Message can not be send! Click here for more information.");
+			} catch (AWTException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+        boolean isSideBarOpen = false;   
+    private boolean isSend;    
 	private ArrayList<Mail> mailListDetails;
 	private SQLiteConnector connection;
         private final Authenticator authenticator;
@@ -701,9 +727,7 @@ public class MainForm extends javax.swing.JFrame {
 	private javax.swing.JEditorPane mailText;
 	private javax.swing.JScrollPane mailTextPane;
 	private javax.swing.JMenuBar mainMenuBar;
-	private javax.swing.JButton newMailBtn;
 	private javax.swing.JMenuItem newMailItem;
-	private javax.swing.JToggleButton speechBtn;
 	private javax.swing.JPanel speechPanel;
 	private javax.swing.JTextField subjectInput;
 	private javax.swing.JLabel subjectLabel;

@@ -9,6 +9,8 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import mailzy.NewMailDialog;
+
 /**
  *
  * @author lalexandrov
@@ -35,6 +37,7 @@ public abstract class MailSender {
           Transport.send(msg);
           
           System.out.println("EMail Sent Successfully!!");
+          
           return true;
         } catch (Exception e) {
           e.printStackTrace();

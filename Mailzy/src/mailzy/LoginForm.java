@@ -14,6 +14,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import mailzy.storage.Authenticator;
+import java.awt.Toolkit;
 
 
 /**
@@ -27,6 +28,7 @@ public class LoginForm extends javax.swing.JDialog {
      */
     public LoginForm(JFrame frame, Authenticator authenticator) {
         super(frame, true);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/swing/images/imgonline-com-ua-resize-aIgUusatZM6xk.png")));
         //setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);  //just for testing
         initComponents();
         this.authenticator = authenticator;
