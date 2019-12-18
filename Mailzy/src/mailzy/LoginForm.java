@@ -7,9 +7,13 @@ package mailzy;
 
 
 import java.awt.Desktop;
+import java.awt.Image;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -28,7 +32,12 @@ public class LoginForm extends javax.swing.JDialog {
      */
     public LoginForm(JFrame frame, Authenticator authenticator) {
         super(frame, true);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/swing/images/imgonline-com-ua-resize-aIgUusatZM6xk.png")));
+        
+        List<Image> icons = new ArrayList<Image>();
+		icons.add(Toolkit.getDefaultToolkit().getImage(MainForm.class.getResource("/swing/images/22x22.png")));
+		icons.add(Toolkit.getDefaultToolkit().getImage(MainForm.class.getResource("/swing/images/32x32.png")));
+		
+		setIconImages(icons);
         //setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);  //just for testing
         initComponents();
         this.authenticator = authenticator;

@@ -6,6 +6,8 @@
 package mailzy;
 
 import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 
 import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
@@ -21,7 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
-
+import java.awt.Image;
 
 import javax.swing.SwingConstants;
 
@@ -54,7 +56,13 @@ public class NewMailDialog extends javax.swing.JDialog {
      */
     public NewMailDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(NewMailDialog.class.getResource("/swing/images/icons8_customer_20px.png")));
+        
+		
+        List<Image> icons = new ArrayList<Image>();
+		icons.add(Toolkit.getDefaultToolkit().getImage(MainForm.class.getResource("/swing/images/22x22.png")));
+		icons.add(Toolkit.getDefaultToolkit().getImage(MainForm.class.getResource("/swing/images/32x32.png")));
+		
+		setIconImages(icons);
         addWindowListener(new WindowAdapter() {
         	@Override
         	public void windowClosing(WindowEvent e) {
