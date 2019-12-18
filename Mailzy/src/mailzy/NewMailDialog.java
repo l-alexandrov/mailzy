@@ -25,9 +25,6 @@ import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
 
 import javax.swing.SwingConstants;
-
-import mailzy.exchange.GmailSender;
-
 import java.awt.*;
 import java.awt.Dimension;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -43,8 +40,6 @@ import java.awt.event.WindowEvent;
  * @author lalexandrov
  */
 public class NewMailDialog extends javax.swing.JDialog {
-
-public final GmailSender send = new GmailSender();
 	
 	
     /**

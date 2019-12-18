@@ -6,6 +6,8 @@
 package mailzy.storage;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.*;
 import java.security.spec.*;
 import java.util.*;
@@ -22,6 +24,7 @@ public class Authenticator {
     public Authenticator(HashMap<String, MailProvider> mailProviders) throws Exception {
         this.username = null;
         this.password = null;
+        loadKeys();
         this.mailProviders = mailProviders;
         new File(this.fileName).createNewFile();
         this.mailReader = new MailReader();
@@ -56,11 +59,45 @@ public class Authenticator {
             throw new Exception();
         }
     }
+    public void loadKeys() {
+    	Path path1 = Path.of("RSA/publicKey");
+    	Path path2 = Path.of("RSA/privateKey");
+    	if(!Files.exists(path1) || !Files.exists(path2)) {
+    		this.generateKeys();
+    	}
 
-    private PublicKey getPublicKey(){
+        try {
+			this.publicKey = getPublicKey(Files.readAllBytes(path1));
+			this.privateKey = getPrivateKey(Files.readAllBytes(path2));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	
+    }
+    private void generateKeys() {
+		try {
+			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+	        keyGen.initialize(1024);
+	        KeyPair pair = keyGen.generateKeyPair();
+	        this.writeKeyToFile("RSA/publicKey", Base64.getEncoder().encode(pair.getPublic().getEncoded()));
+	        this.writeKeyToFile("RSA/privateKey", Base64.getEncoder().encode(pair.getPrivate().getEncoded()));
+	    } catch (NoSuchAlgorithmException | IOException e) {
+			e.printStackTrace();
+		}
+    }
+    public void writeKeyToFile(String path, byte[] key) throws IOException {
+        File f = new File(path);
+        f.getParentFile().mkdirs();
+
+        FileOutputStream fos = new FileOutputStream(f);
+        fos.write(key);
+        fos.flush();
+        fos.close();
+    }
+    private PublicKey getPublicKey(byte[] publicKeyBytes){
         PublicKey pk = null;
         try{
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(this.publicKey.getBytes()));
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyBytes));
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             pk = keyFactory.generatePublic(keySpec);
             return pk;
@@ -72,9 +109,9 @@ public class Authenticator {
         return pk;
     }
 
-    private PrivateKey getPrivateKey(){
+    private PrivateKey getPrivateKey(byte[] privateKeyBytes){
         PrivateKey pk = null;
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(this.privateKey.getBytes()));
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyBytes));
         KeyFactory keyFactory = null;
         try {
             keyFactory = KeyFactory.getInstance("RSA");
@@ -91,15 +128,14 @@ public class Authenticator {
 
     private byte[] encrypt(String data) throws BadPaddingException, IllegalBlockSizeException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException {
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, getPublicKey());
+        cipher.init(Cipher.ENCRYPT_MODE, this.publicKey);
         return cipher.doFinal(data.getBytes());
     }
 
     private String decrypt(String data) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
 
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        Key privateKey = getPrivateKey();
-        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+        cipher.init(Cipher.DECRYPT_MODE, this.privateKey);
         return new String(cipher.doFinal(Base64.getDecoder().decode(data.getBytes())));
     }
     public String getUserName(){
@@ -154,8 +190,8 @@ public class Authenticator {
     public MailSender getMailSender(){
         return this.mailSender;
     }
-    private final String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDbf114O+1t7OkgeM/qX/8Vpzxyz4h15Q9Z3Aqvsnk0wlTIqzzaE7JS0Rvv3RXb8JSFj9aF4wqNvX3xv5f4l4HcTpdJt5DBzjtlbs0kxvJnTLTifXPbFxDBj1lgZ8uBGJl1a3j4kppT+i/3YGLUmk1ifo0mPPwwmeeIHliyNgysowIDAQAB";
-    private final String privateKey = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBANt/XXg77W3s6SB4z+pf/xWnPHLPiHXlD1ncCq+yeTTCVMirPNoTslLRG+/dFdvwlIWP1oXjCo29ffG/l/iXgdxOl0m3kMHOO2VuzSTG8mdMtOJ9c9sXEMGPWWBny4EYmXVrePiSmlP6L/dgYtSaTWJ+jSY8/DCZ54geWLI2DKyjAgMBAAECgYAIQligB5E9i6aSBDm+lfIhPHO31jtKRF45gWAdkFejNpS+IENf6VHSb+/fLLB/4COWiv0FeK+S+chdalorjnfiYnKcZTjH/XcWCTw9fyduMnX/3P31BevlLEVSWT4dvj4TpWJ4uQrl5Q19S2t+jFlWuO6X7nc47uuxhhGTw2ifwQJBAPKIAWdUo2UwzSQgfPzB6rnFMlWxLwO+VSLp9FbwJla6tH4sioiIK5M4PO3OkL4IxNQIak2X2p6zHkxH1w9h03ECQQDnr+VLVlx21yfvFW3s+VN5yxzY4dBsFu32qUjrOo0sMTEZgpvEWUaDRLh8DEZeQI9P26OIf5jSPOE6mAlZSY9TAkBg2qeU2FwYQRDraH4Bgn92iKW9SvD3kb72HnARd/4XjKAf8zGvrJGaTU8nuOJcwau48VNigU4xKl7jH51m6y5BAkA2VhBGjOh+jpM1BSeUrhyfsb0AOGVzFCWW9bi+QisdtCO5weHaOL3Kx3Ek1pQiQq3Zor9FofcrR0/jOAjpQdE1AkBmoiE5H1EDxHFh5skBiJtEVan3e+saO02O3OK6hsGuWnjPVMXZuBqm3K5WX+B8PCX0D18e2itoYO8iZoUG/tft";
+    private PublicKey publicKey = null;
+    private PrivateKey privateKey = null;
     private final HashMap<String, MailProvider> mailProviders;
     private String username;
     private String password;
