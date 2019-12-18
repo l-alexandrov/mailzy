@@ -11,7 +11,7 @@ import java.util.regex.Matcher;
 import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
 import javax.swing.JPanel;
 
-import java.awt.AWTException;
+
 import java.awt.Color;
 
 import javax.mail.MessagingException;
@@ -21,19 +21,16 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
-import java.awt.Image;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
-import java.awt.TrayIcon.MessageType;
+
 
 import javax.swing.SwingConstants;
 
 
-import java.awt.*;
+
 import java.awt.Dimension;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import com.sun.mail.imap.protocol.BODY;
+
 
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -41,6 +38,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.Toolkit;
 
 /**
  *
@@ -56,6 +54,7 @@ public class NewMailDialog extends javax.swing.JDialog {
      */
     public NewMailDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(NewMailDialog.class.getResource("/swing/images/icons8_customer_20px.png")));
         addWindowListener(new WindowAdapter() {
         	@Override
         	public void windowClosing(WindowEvent e) {
