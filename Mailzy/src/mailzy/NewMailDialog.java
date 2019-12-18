@@ -26,9 +26,7 @@ import java.awt.Font;
 import java.awt.Image;
 
 import javax.swing.SwingConstants;
-
-
-
+import java.awt.*;
 import java.awt.Dimension;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
@@ -47,10 +45,6 @@ import java.awt.Toolkit;
  * @author lalexandrov
  */
 public class NewMailDialog extends javax.swing.JDialog {
-
-
-	
-	
     /**
      * Creates new form NewMailDialog
      */
