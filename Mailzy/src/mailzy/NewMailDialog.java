@@ -336,13 +336,13 @@ public class NewMailDialog extends javax.swing.JDialog {
 //		
 //    }
     public Mail getMail() {
-    	if(this.textTo.getText() == "" || this.textSubject.getText() == "" || this.editor.getText() == "")
+    	if(this.textTo.getText().length() == 0 || this.textSubject.getText().length() == 0 || this.editor.getText() == "nAn")
     		return null;
     	return new Mail( this.textTo.getText(), this.textSubject.getText(), this.editor.getText() );
     }
 
 	private void resetDiaogData() {
-		this.editor.setText("");
+		this.editor.setText("nAn");
 		this.textTo.setText("");
 		this.textSubject.setText("");
 	}
