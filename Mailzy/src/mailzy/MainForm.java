@@ -29,6 +29,7 @@ import mailzy.exchange.MailSender;
 import mailzy.exchange.Notification;
 import mailzy.storage.Authenticator;
 import javax.swing.event.ListSelectionListener;
+import javax.xml.crypto.Data;
 
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -36,6 +37,8 @@ import javax.swing.event.ListSelectionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Toolkit;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
  *
@@ -249,6 +252,35 @@ public class MainForm extends javax.swing.JFrame {
 		setJMenuBar(mainMenuBar);
 
 		mailList = new JList();
+		mailList.addKeyListener(new KeyAdapter() {
+			@Override
+		public void keyReleased(KeyEvent e) {
+//				
+//	            
+//				//mailListDetails.remove(3);
+//				
+//				int code=e.getKeyCode();
+//		        if(code==KeyEvent.VK_DELETE){
+//		            int selection = mailList.getSelectedIndex(); 
+//		            if(selection < 0)
+//						return;
+//		            Mail mail  = mailListDetails.get(selection);
+//		            Date asd = (Date) mail.lastModified;
+//		            
+//		            	//mailList.removeAll();
+//		            
+//		            mailListDetails.remove(selection);
+//		            
+//		                for(int i=0;i< mailListDetails.size();i++){
+//		                    ((DefaultListModel<String>) mailList.getModel()).addElement(mailListDetails.get(i).subject);
+//		                }
+//		    		
+//		            
+//		        }
+//				
+//				
+			}
+		});
 		mailList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				int index = mailList.getSelectedIndex();
