@@ -37,6 +37,7 @@ import javax.swing.event.ListSelectionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Toolkit;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -47,7 +48,7 @@ import java.awt.event.KeyEvent;
 public class MainForm extends javax.swing.JFrame {
 	
 	public final Notification nt = new Notification();
-
+	DefaultListModel<String> dlm = new DefaultListModel<String>();
 	private static final String String = null;
 	/**
 	 * Creates new form MainForm
@@ -82,7 +83,8 @@ public class MainForm extends javax.swing.JFrame {
 		this.setVisible(true);
 		this.connection = null;
 		this.mailListDetails = new ArrayList<Mail>();
-		this.mailList.setModel(new DefaultListModel<String>());
+		
+		this.mailList.setModel(dlm);
 		this.authenticator = authenticator;
 		establishConnection();
         refreshDB();
@@ -255,30 +257,23 @@ public class MainForm extends javax.swing.JFrame {
 		mailList.addKeyListener(new KeyAdapter() {
 			@Override
 		public void keyReleased(KeyEvent e) {
-//				
-//	            
-//				//mailListDetails.remove(3);
-//				
-//				int code=e.getKeyCode();
-//		        if(code==KeyEvent.VK_DELETE){
-//		            int selection = mailList.getSelectedIndex(); 
-//		            if(selection < 0)
-//						return;
-//		            Mail mail  = mailListDetails.get(selection);
-//		            Date asd = (Date) mail.lastModified;
-//		            
-//		            	//mailList.removeAll();
-//		            
-//		            mailListDetails.remove(selection);
-//		            
-//		                for(int i=0;i< mailListDetails.size();i++){
-//		                    ((DefaultListModel<String>) mailList.getModel()).addElement(mailListDetails.get(i).subject);
-//		                }
-//		    		
-//		            
-//		        }
-//				
-//				
+				int code=e.getKeyCode();
+		        if(code==KeyEvent.VK_DELETE){
+		            int selection = mailList.getSelectedIndex(); 
+		            if(selection < 0) 
+		            {
+						return;
+		            }
+		            //dlm.removeElementAt(selection);
+		            dlm.setElementAt("DELETED", selection);
+		            fromInput.setText("");
+					subjectInput.setText("");
+					mailText.setText("");
+		            Mail mail  = mailListDetails.get(selection);
+					mail.body=null;
+					mail.from=null;
+					mail.subject="DELETED";
+		        }	
 			}
 		});
 		mailList.addListSelectionListener(new ListSelectionListener() {
@@ -713,6 +708,7 @@ public class MainForm extends javax.swing.JFrame {
 	}
 	
 	
+	
 	private void showNewMailForm() {
             NewMailDialog dialog = new NewMailDialog(this, true);
             Mail mail = dialog.getMail();
@@ -730,7 +726,7 @@ public class MainForm extends javax.swing.JFrame {
 	public void showNotification() {
 		if(this.isSend) {
 			try {
-				nt.displayTray("Mailzy - Message send!", "Message send syccessfuly");
+				nt.displayTray("Mailzy - Message send!", "Message send syccessfuly", MessageType.NONE);
 			} catch (AWTException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -738,7 +734,7 @@ public class MainForm extends javax.swing.JFrame {
 		}
 		else {
 			try {
-				nt.displayTray("Mailzy - Error!", "Message can not be send! Click here for more information.");
+				nt.displayTray("Mailzy - Error!", "Message can not be send! Click here for more information.", MessageType.ERROR);
 			} catch (AWTException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -746,7 +742,8 @@ public class MainForm extends javax.swing.JFrame {
 		}
 	}
 
-        boolean isSideBarOpen = false;   
+
+    private boolean isSideBarOpen = false;   
     private boolean isSend;    
 	private ArrayList<Mail> mailListDetails;
 	private SQLiteConnector connection;

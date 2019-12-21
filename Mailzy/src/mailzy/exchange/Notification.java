@@ -13,28 +13,18 @@ import mailzy.MainForm;
 
 public class Notification {
 
-	public void displayTray(String messageTitle, String messageText) throws AWTException {
-        //Obtain only one instance of the SystemTray object
+	public void displayTray(String messageTitle, String messageText, MessageType type) throws AWTException {
+        
         SystemTray tray = SystemTray.getSystemTray();
-        
-        
+                
+        Image image = Toolkit.getDefaultToolkit().getImage("src/swing/images/32x32.png");
 		
-		
-        
-        //If the icon is a file
-        //Image image = Toolkit.getDefaultToolkit().createImage("icon.png");
-        //Alternative (if the icon is on the classpath):
-        Image image = Toolkit.getDefaultToolkit().getImage("/swing/images/32x32.png");
-        Image image1 = Toolkit.getDefaultToolkit().getImage("src/swing/images/32x32.png");
-		
-        TrayIcon trayIcon = new TrayIcon(image1, "Message information");
-        //Let the system resize the image if needed
+        TrayIcon trayIcon = new TrayIcon(image, "Message information");
         trayIcon.setImageAutoSize(true);
-        //Set tooltip text for the tray icon
         trayIcon.setToolTip("Mailzy super Email client");
         tray.add(trayIcon);
 
-        trayIcon.displayMessage(messageTitle, messageText, MessageType.ERROR);
+        trayIcon.displayMessage(messageTitle, messageText, type);
     }
 	
 }
